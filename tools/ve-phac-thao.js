@@ -361,10 +361,9 @@ function boHoa() {
   const cham = (d, w = 6, gap = 8.5) => `<path d="${d}" fill="none" stroke="#FFFFFF" stroke-width="${w}" stroke-dasharray="0.1 ${gap}" stroke-linecap="round"/>`;
   let s = '<g id="bo-hoa">';
 
-  // --- cán hoa (thò ra dưới bàn tay)
-  s += `<path d="M${P(T)} L-58,400" stroke="${INK}" stroke-width="18" stroke-linecap="round"/>`;
-  s += `<path d="M${P(T)} L-58,400" stroke="#F1F6FA" stroke-width="14" stroke-linecap="round"/>`;
-  s += `<path d="M-40,374 l10,9 M-48,383 l10,9" stroke="#9FD5EA" stroke-width="3" stroke-linecap="round"/>`;
+  // --- cán hoa (nằm gọn trong bàn tay)
+  s += `<path d="M${P(T)} L-30,370" stroke="${INK}" stroke-width="18" stroke-linecap="round"/>`;
+  s += `<path d="M${P(T)} L-30,370" stroke="#F1F6FA" stroke-width="14" stroke-linecap="round"/>`;
 
   // --- giấy gói phía sau: hai lớp xoè như quạt, mép ren vỏ sò
   const sau = `M${P(Tl)} L${P(bp(18, -124))} Q${P(bp(58, -94))} ${P(bp(112, -84))} Q${P(bp(114, -38))} ${P(bp(148, 2))} Q${P(bp(110, 44))} ${P(bp(104, 98))} Q${P(bp(48, 102))} ${P(bp(6, 128))} L${P(Tr)}Z`;
@@ -479,36 +478,72 @@ function vayLua() {
   return s + '</g>';
 }
 
-function vayBacHa() {
-  const c = '#C6E7DC', sh = '#A4D4C4', hi = '#E6F5EF', no = '#96CDBA';
-  let s = '<g id="vay-bac-ha">';
-  // đuôi nơ xếp ly thả sau lưng (bên phải)
-  s += `<path class="n" fill="${no}" d="M48,300 L112,304 C120,368 116,436 110,498 L64,500 C62,434 58,366 48,300Z"/>`;
-  for (let i = 1; i < 7; i++) {
-    const t = i / 7;
-    s += `<path class="nm" d="M${f(50 + t * 60)},302 C${f(56 + t * 60)},370 ${f(60 + t * 54)},440 ${f(64 + t * 46)},499"/>`;
+/* ============================================================
+   BÉ THỎ BÔNG FRANILLA: thỏ lông xù màu kem, tai dài rủ, mắt hạt đen.
+   Vẽ làm hai lớp vì cánh tay cô gái nằm xen giữa:
+   thoSau() = thân, chân, đầu, tai phải  →  cánh tay ôm  →  thoTruoc() = tai trái, hai tay thỏ
+   ============================================================ */
+const THO = { x: -50, to: 'translate(-50 290) scale(1.15) translate(50 -290)', kem: '#FBF5EA', bong: '#E9DCC8', sang: '#FFFDF8', vien: '#94877B', taiTrong: '#F2D9CF', mui: '#E79C9F' };
+function xu(cx, cy, rx, ry, n = 24, amp = 0.045) {
+  // viền xù lông: bán kính nhấp nhô quanh hình bầu dục
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * 6.2832;
+    const k = 1 + (i % 2 ? amp : -amp) + R(-amp * 0.4, amp * 0.4);
+    pts.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]);
   }
-  // lớp voan trắng ló dưới gấu
-  let voan = 'M-98,468';
-  for (let x = -98; x < 98; x += 28) voan += ` q14,34 28,0`;
-  voan += ' L98,452 L-98,452Z';
-  s += `<path class="n" fill="#FFFFFF" d="${voan}"/>`;
-  // chân váy chữ A phồng
-  s += `<path class="n" fill="${c}" d="M-57,304 C-70,350 -96,410 -102,456 C-104,476 -92,484 -76,482 C-30,490 30,490 76,482 C92,484 104,476 102,456 C96,410 70,350 57,304 Z"/>`;
-  s += `<path fill="${sh}" opacity=".75" d="M20,312 C44,360 60,430 58,486 C66,485 72,484 76,482 C92,484 104,476 102,456 C96,410 70,350 57,304Z"/>`;
-  s += `<path fill="${hi}" opacity=".85" d="M-58,330 C-72,380 -86,430 -88,468 L-72,474 C-70,430 -60,380 -46,332Z"/>`;
-  s += `<path class="nm" d="M-20,314 C-26,370 -30,430 -30,484 M24,314 C30,370 34,430 34,484"/>`;
-  // thân trên cúp ngực, cổ khoét chữ V
-  s += `<path class="n" fill="${c}" d="M-73,224 C-66,210 -56,194 -42,190 C-28,188 -14,208 0,240 C14,208 28,188 42,190 C56,194 66,210 73,224 C71,252 63,282 59,306 L-59,306 C-63,282 -71,252 -73,224 Z"/>`;
-  s += `<path fill="${sh}" opacity=".75" d="M12,222 C30,250 40,280 40,306 L59,306 C63,282 71,252 73,224 C66,210 56,194 42,190 C30,190 20,204 12,222Z"/>`;
-  s += `<path fill="${hi}" opacity=".8" d="M-62,226 C-58,206 -50,196 -40,196 C-46,206 -50,220 -50,238Z"/>`;
-  s += `<path class="nm" d="M-34,196 C-30,236 -30,270 -32,300 M34,196 C30,236 30,270 32,300"/>`;
-  // đai eo
-  s += `<path class="n nh" fill="${sh}" d="M-59,299 L59,299 L57,313 L-57,313Z"/>`;
-  // nơ lớn sau eo
-  s += `<path class="n" fill="${no}" d="M56,300 C72,268 108,262 124,280 C132,292 126,312 110,318 C92,322 70,316 56,304Z"/>`;
-  for (let i = 0; i < 5; i++) s += `<path class="nm" d="M60,${f(301 + i * 0.6)} Q${f(92 + i * 2)},${f(272 + i * 9)} ${f(122 - i * 2)},${f(282 + i * 8)}"/>`;
-  s += `<rect class="n nh" x="50" y="294" width="13" height="18" rx="4" fill="${c}"/>`;
+  return smoothClosed(pts);
+}
+function longTo(cx, cy, rx, ry, n) {
+  // vài nét lông tơ ngắn bên trong
+  let d = '';
+  for (let i = 0; i < n; i++) {
+    const a = R(0, 6.2832), k = Math.sqrt(rnd()) * 0.8;
+    const x = cx + Math.cos(a) * rx * k, y = cy + Math.sin(a) * ry * k;
+    d += `M${f(x)},${f(y)}q${f(R(-2, 2))},${f(R(2, 4))} ${f(R(-3, 3))},${f(R(5, 8))}`;
+  }
+  return `<path d="${d}" fill="none" stroke="#D9CBB6" stroke-width="1.1" stroke-linecap="round"/>`;
+}
+function taiTho(ben) {
+  // ben = 1: tai bên phải tranh, -1: tai bên trái tranh (đối xứng qua trục đầu thỏ)
+  const X = (dx) => f(THO.x + ben * dx);
+  return `<path class="nt" fill="${THO.kem}" d="M${X(10)},226 C${X(17)},215 ${X(30)},219 ${X(34)},233 C${X(40)},252 ${X(42)},276 ${X(37)},292`
+    + ` C${X(34)},300 ${X(26)},300 ${X(24)},292 C${X(21)},274 ${X(20)},252 ${X(10)},226Z"/>`
+    + `<path fill="${THO.taiTrong}" opacity=".7" d="M${X(14)},232 C${X(22)},252 ${X(24)},274 ${X(27)},290 C${X(31)},286 ${X(31)},268 ${X(29)},254 C${X(26)},242 ${X(21)},235 ${X(14)},232Z"/>`
+    + `<path d="M${X(33)},240 q${f(ben * 3)},10 ${f(ben * 3)},22 M${X(36)},268 q${f(ben * 1)},9 ${f(-ben * 1)},16" fill="none" stroke="#D9CBB6" stroke-width="1.1" stroke-linecap="round"/>`;
+}
+function thoSau() {
+  const cx = THO.x;
+  let s = `<g id="tho" transform="${THO.to}">`;
+  // thân
+  s += `<path class="nt" d="${xu(cx - 2, 316, 31, 38, 26)}" fill="${THO.kem}"/>`;
+  s += `<path d="${blob(cx + 8, 334, 18, 16, 9, 0.1)}" fill="${THO.bong}" opacity=".5"/>`;
+  s += longTo(cx - 2, 330, 24, 20, 10);
+  // hai chân thõng xuống dưới cánh tay
+  s += `<path class="nt" d="${xu(cx - 22, 358, 14, 11, 16, 0.05)}" fill="${THO.kem}"/>`;
+  s += `<path class="nt" d="${xu(cx + 8, 360, 14, 11, 16, 0.05)}" fill="${THO.kem}"/>`;
+  // đầu
+  s += `<path class="nt" d="${xu(cx, 250, 31, 29, 28)}" fill="${THO.kem}"/>`;
+  s += `<path d="${blob(cx + 10, 262, 16, 12, 9, 0.1)}" fill="${THO.bong}" opacity=".4"/>`;
+  s += `<path d="${blob(cx, 261, 14, 10, 9, 0.08)}" fill="${THO.sang}"/>`;
+  s += longTo(cx, 240, 24, 14, 9);
+  // mắt hạt đen, mũi hồng, miệng chỉ thêu
+  s += `<circle cx="${cx - 12}" cy="250" r="3" fill="#2B2730"/><circle cx="${cx + 12}" cy="250" r="3" fill="#2B2730"/>`;
+  s += `<circle cx="${cx - 13}" cy="249" r="1" fill="#FFFFFF"/><circle cx="${cx + 11}" cy="249" r="1" fill="#FFFFFF"/>`;
+  s += `<path d="M${cx - 4},256 Q${cx},254 ${cx + 4},256 Q${cx + 3},261 ${cx},262 Q${cx - 3},261 ${cx - 4},256Z" fill="${THO.mui}" stroke="#B8757B" stroke-width=".8"/>`;
+  s += `<path d="M${cx},262 v3 M${cx},265 q-3,3 -6,1 M${cx},265 q3,3 6,1" fill="none" stroke="${THO.vien}" stroke-width="1.1" stroke-linecap="round"/>`;
+  // tai bên phải tranh rủ xuống
+  s += taiTho(1);
+  return s + '</g>';
+}
+function thoTruoc() {
+  const cx = THO.x;
+  let s = `<g id="tho-truoc" transform="${THO.to}">`;
+  // tai bên trái tranh tựa lên cánh tay cô gái
+  s += taiTho(-1);
+  // hai tay thỏ vắt lên cẳng tay
+  s += `<path class="nt" d="${xu(cx - 22, 292, 10, 12, 14, 0.05)}" fill="${THO.kem}"/>`;
+  s += `<path class="nt" d="${xu(cx + 14, 289, 10, 12, 14, 0.05)}" fill="${THO.kem}"/>`;
   return s + '</g>';
 }
 
@@ -536,7 +571,6 @@ function coGai() {
 
   // --- váy
   s += vayLua();
-  s += vayBacHa();
 
   // --- cánh tay bên phải tranh: phải vẽ SAU váy để cẳng tay nằm trước váy
   //     (bắp tay sẽ bị bó hoa che, cẳng tay đỡ dưới bó hoa rồi vòng ra nắm cổ bó)
@@ -550,15 +584,9 @@ function coGai() {
       + `<path d="${d}" fill="none" stroke="#9FD8EC" stroke-width="${w}" stroke-linecap="butt"/>`
       + `<path d="${d}" fill="none" stroke="#D5F0F8" stroke-width="${f(w * 0.25)}" stroke-linecap="butt" opacity=".9"/>`;
   };
-  s += ruy([[-30, 372], [-40, 410], [-30, 450], [-44, 496]], 9);
-  s += ruy([[-16, 368], [-8, 420], [-16, 470], [-2, 528]], 10);
-  s += ruy([[-22, 370], [-22, 400], [-12, 440], [-24, 478]], 8);
-
-  // --- cánh tay bên trái tranh
-  s += `<path class="n" fill="${da}" d="M-70,152 C-86,152 -98,164 -100,184 C-106,226 -114,262 -114,292 C-114,306 -106,316 -94,318 C-82,334 -68,354 -56,374 L-38,358 C-50,342 -64,322 -78,300 C-80,270 -76,236 -72,204 C-70,186 -70,168 -70,152 Z"/>`;
-  s += `<path fill="${daBong}" opacity=".28" d="M-78,300 C-80,270 -76,236 -72,204 L-80,206 C-86,240 -90,270 -90,298Z"/>`;
-  // xoá nét nối vai để cánh tay liền với vai
-  s += `<path fill="${da}" d="M-75,155 C-70,153.8 -66,154.4 -65.5,160 L-66,190 L-76,194 C-81,180 -81,166 -75,155Z"/>`;
+  s += ruy([[-18, 372], [-26, 410], [-16, 450], [-28, 496]], 9);
+  s += ruy([[-4, 370], [4, 422], [-4, 472], [10, 528]], 10);
+  s += ruy([[-10, 372], [-10, 402], [0, 442], [-10, 478]], 8);
 
   // --- đầu (nghiêng nhẹ về phía bó hoa)
   s += '<g transform="rotate(4 0 118)">';
@@ -603,12 +631,27 @@ function coGai() {
   // --- bó hoa
   s += boHoa();
 
-  // --- hai bàn tay ôm bó hoa
+  // --- bàn tay bên phải tranh nắm cổ bó hoa
   s += `<path class="n" fill="${da}" d="M16,343 C4,337 -14,337 -25,343 C-34,349 -33,365 -24,371 C-10,377 4,377 16,374 Z"/>`;
   s += `<path fill="${da}" d="M10,346 L20,345 L20,372 L10,373Z"/>`;
   s += `<path class="nm" d="M-26,349 q8,3 15,0 M-29,357 q9,3 17,0 M-26,365 q8,2 14,0"/>`;
-  s += `<path class="n" fill="${da}" d="M-57,366 C-60,380 -52,391 -39,391 C-28,391 -19,384 -19,375 C-19,366 -28,359 -39,357 Z"/>`;
-  s += `<path class="nm" d="M-25,369 q-8,1 -12,6 M-22,376 q-8,2 -13,7 M-27,384 q-6,0 -10,4"/>`;
+
+  // --- bé thỏ bông: thân, chân, đầu, tai phải (nằm sau cánh tay ôm)
+  s += thoSau();
+
+  // --- cánh tay bên trái tranh: gập khuỷu, ôm ngang người bé thỏ
+  s += `<path class="n" fill="${da}" d="M-70,152 C-86,152 -98,164 -100,184 C-106,222 -118,254 -120,282 C-121,300 -114,312 -100,314 C-80,318 -60,321 -40,322 L-38,298 C-54,294 -70,288 -82,280 C-80,256 -76,230 -72,204 C-70,186 -70,168 -70,152 Z"/>`;
+  s += `<path fill="${daBong}" opacity=".28" d="M-82,280 C-80,256 -76,230 -72,204 L-80,206 C-86,236 -91,260 -93,280Z"/>`;
+  s += `<path fill="${daBong}" opacity=".38" d="M-116,300 C-96,310 -64,314 -40,316 L-40,322 C-60,321 -80,318 -100,314 C-108,313 -114,308 -116,300Z"/>`;
+  // xoá nét nối vai để cánh tay liền với vai
+  s += `<path fill="${da}" d="M-75,155 C-70,153.8 -66,154.4 -65.5,160 L-66,190 L-76,194 C-81,180 -81,166 -75,155Z"/>`;
+  // bàn tay ôm lấy sườn bé thỏ
+  s += `<path class="n" fill="${da}" d="M-42,296 C-32,292 -20,294 -15,302 C-11,310 -14,321 -22,325 C-30,328 -38,326 -42,323 Z"/>`;
+  s += `<path fill="${da}" d="M-45,299 L-37,298 L-37,321 L-45,321.5Z"/>`;
+  s += `<path class="nm" d="M-18,303 q-6,1 -10,5 M-15,310 q-7,1 -11,5 M-18,318 q-6,0 -9,3"/>`;
+
+  // --- tai trái và hai tay thỏ vắt lên cánh tay
+  s += thoTruoc();
   return s;
 }
 
@@ -839,8 +882,8 @@ function lopLapLanh() {
 function svg() {
   const d = defs();
   const scene = canh();
-  return `<svg class="tranh" id="tranh" data-vay="lua" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="tranh-ten">
-  <title id="tranh-ten">Phác thảo: cô gái búi tóc, không vẽ mắt, ôm đoá hoa xanh trắng, đứng trên đồng cỏ Đà Lạt có đồi thông, mặt hồ sương và đỉnh LangBiang phía xa</title>
+  return `<svg class="tranh" id="tranh" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="tranh-ten">
+  <title id="tranh-ten">Phác thảo: cô gái búi tóc, không vẽ mắt, mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông màu kem, đứng trên đồng cỏ Đà Lạt có đồi thông, mặt hồ sương và đỉnh LangBiang phía xa</title>
   ${d}
   <g filter="url(#rung)"><g clip-path="url(#mep)">
   ${scene}
@@ -883,16 +926,9 @@ h1{font-family:var(--chu-de);font-weight:500;font-style:italic;font-size:clamp(1
 .nx{stroke:${INK};stroke-width:1.1;stroke-linejoin:round;stroke-opacity:.75}
 .nk{fill:none;stroke:#A39A82;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
 .nf{stroke:#5B7BA6;stroke-width:1.3;stroke-linejoin:round;stroke-linecap:round}
-.tranh[data-vay="lua"] #vay-bac-ha,.tranh[data-vay="bac-ha"] #vay-lua{display:none}
+.nt{stroke:#94877B;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
 .ll{fill:#FFFFFF;stroke:#9CC4E4;stroke-width:.8;animation:chop 3.4s ease-in-out infinite}
 @keyframes chop{0%,100%{opacity:.95}50%{opacity:.25}}
-.chon{display:flex;flex-direction:column;gap:10px}
-.chon p{margin:0;font-size:.9rem;color:var(--muc-nhat)}
-.nut-nhom{display:flex;flex-wrap:wrap;gap:8px}
-.nut-nhom button{font:inherit;font-size:.92rem;padding:9px 16px;border-radius:999px;border:1.5px solid var(--vien);background:var(--nut);color:var(--muc);cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-.nut-nhom button::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--mau);box-shadow:0 0 0 1px rgba(40,55,80,.35)}
-.nut-nhom button[aria-pressed="true"]{border-color:var(--nhan);box-shadow:0 0 0 1.5px var(--nhan)}
-.nut-nhom button:focus-visible{outline:3px solid var(--nhan);outline-offset:3px}
 .ghi-chu{margin:0;color:var(--muc-nhat);font-size:.9rem;max-width:60ch}
 @media (prefers-reduced-motion: reduce){ .ll{animation:none} }
 `;
@@ -901,7 +937,7 @@ const BODY = `
 <main class="trang">
   <header class="dau">
     <p class="nhan">Phác thảo số 01 · thiệp sinh nhật</p>
-    <h1>Cô gái ôm hoa giữa Đà Lạt</h1>
+    <h1>Cô gái ôm hoa và bé thỏ giữa Đà Lạt</h1>
   </header>
 
   <figure class="to-giay">
@@ -909,29 +945,8 @@ const BODY = `
     <figcaption>Đà Lạt, một sáng nhiều sương</figcaption>
   </figure>
 
-  <div class="chon">
-    <p>Váy trong tranh</p>
-    <div class="nut-nhom" role="group" aria-label="Chọn váy trong tranh">
-      <button type="button" id="nut-vay-lua" data-vay="lua" aria-pressed="true" style="--mau:#C3DBF3">Váy lụa xanh viền ren</button>
-      <button type="button" id="nut-vay-bac-ha" data-vay="bac-ha" aria-pressed="false" style="--mau:#C6E7DC">Váy bạc hà thắt nơ</button>
-    </div>
-  </div>
-
-  <p class="ghi-chu">Trong tranh: đỉnh LangBiang hai ngọn, đồi thông, nhà thờ nhỏ bên hồ sương, bụi dã quỳ tháng mười một và cẩm tú cầu dưới chân. Đoá hoa vẽ theo bó thật: lily xanh, hồng kem, hồng môn xanh, hoa sao nhỏ, giấy ren trắng và ruy băng xanh.</p>
+  <p class="ghi-chu">Trong tranh: đỉnh LangBiang hai ngọn, đồi thông, nhà thờ nhỏ bên hồ sương, bụi dã quỳ tháng mười một và cẩm tú cầu dưới chân. Đoá hoa vẽ theo bó thật: lily xanh, hồng kem, hồng môn xanh, hoa sao nhỏ, nụ tulip trắng, giấy ren trắng và ruy băng xanh. Tay còn lại ôm bé thỏ bông Franilla màu kem, tai dài rủ.</p>
 </main>
-
-<script>
-(function(){
-  var tranh=document.getElementById('tranh');
-  var nut=document.querySelectorAll('.nut-nhom button');
-  nut.forEach(function(b){
-    b.addEventListener('click',function(){
-      tranh.setAttribute('data-vay', b.getAttribute('data-vay'));
-      nut.forEach(function(k){ k.setAttribute('aria-pressed', k===b ? 'true' : 'false'); });
-    });
-  });
-})();
-</script>
 `;
 
 const TITLE = 'Phác thảo Đà Lạt';
