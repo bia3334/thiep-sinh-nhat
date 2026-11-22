@@ -479,71 +479,91 @@ function vayLua() {
 }
 
 /* ============================================================
-   BÉ THỎ BÔNG FRANILLA: thỏ lông xù màu kem, tai dài rủ, mắt hạt đen.
+   BÉ THỎ BÔNG FRANILLA: thỏ lông xù màu kem, tai dài rủ có thêu chữ, cổ đeo yếm.
    Vẽ làm hai lớp vì cánh tay cô gái nằm xen giữa:
-   thoSau() = thân, chân, đầu, tai phải  →  cánh tay ôm  →  thoTruoc() = tai trái, hai tay thỏ
+   thoSau() = thân, chân, yếm, đầu  →  cánh tay ôm  →  thoTruoc() = hai tai, hai tay thỏ
    ============================================================ */
-const THO = { x: -50, to: 'translate(-50 290) scale(1.15) translate(50 -290)', kem: '#FBF5EA', bong: '#E9DCC8', sang: '#FFFDF8', vien: '#94877B', taiTrong: '#F2D9CF', mui: '#E79C9F' };
-function xu(cx, cy, rx, ry, n = 24, amp = 0.045) {
-  // viền xù lông: bán kính nhấp nhô quanh hình bầu dục
-  const pts = [];
-  for (let i = 0; i < n; i++) {
-    const a = (i / n) * 6.2832;
-    const k = 1 + (i % 2 ? amp : -amp) + R(-amp * 0.4, amp * 0.4);
-    pts.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]);
-  }
-  return smoothClosed(pts);
-}
-function longTo(cx, cy, rx, ry, n) {
-  // vài nét lông tơ ngắn bên trong
+const THO = {
+  x: -50,
+  to: 'translate(-50 282) scale(1.15) translate(50 -290)', // vị trí + cỡ bé thỏ trong vòng tay
+  kem: '#FBF5EA', bong: '#E9DCC8', sang: '#FFFDF8', vien: '#94877B', loTai: '#F6EADB', mui: '#E79C9F',
+  chuTrai: 'Tặng Vê',   // chữ thêu trên tai bên trái tranh
+  chuPhai: 'Minh Thư',  // chữ thêu trên tai bên phải tranh
+  chiTheu: '#B5823A',   // màu chỉ thêu nâu vàng
+};
+function xu(cx, cy, rx, ry, n = 22, amp = 0.15) {
+  // viền lông xù: từng chỏm lông nhọn, hơi xoáy về một phía
+  const pt = (a, k) => [cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k];
   let d = '';
   for (let i = 0; i < n; i++) {
-    const a = R(0, 6.2832), k = Math.sqrt(rnd()) * 0.8;
-    const x = cx + Math.cos(a) * rx * k, y = cy + Math.sin(a) * ry * k;
-    d += `M${f(x)},${f(y)}q${f(R(-2, 2))},${f(R(2, 4))} ${f(R(-3, 3))},${f(R(5, 8))}`;
+    const a0 = (i / n) * 6.2832, a1 = ((i + 1) / n) * 6.2832;
+    const aTip = a0 + (a1 - a0) * R(0.55, 0.82);
+    const kTip = 1 + amp * R(0.55, 1.2);
+    if (i === 0) d += `M${P(pt(a0, 1 - amp * 0.3))}`;
+    d += `Q${P(pt(a0 + (aTip - a0) * 0.5, 1 + amp * 0.75))} ${P(pt(aTip, kTip))}`
+      + `Q${P(pt(aTip + (a1 - aTip) * 0.3, 1 + amp * 0.05))} ${P(pt(a1, 1 - amp * 0.3))}`;
   }
-  return `<path d="${d}" fill="none" stroke="#D9CBB6" stroke-width="1.1" stroke-linecap="round"/>`;
+  return d + 'Z';
 }
-function taiTho(ben) {
-  // ben = 1: tai bên phải tranh, -1: tai bên trái tranh (đối xứng qua trục đầu thỏ)
-  const X = (dx) => f(THO.x + ben * dx);
-  return `<path class="nt" fill="${THO.kem}" d="M${X(10)},226 C${X(17)},215 ${X(30)},219 ${X(34)},233 C${X(40)},252 ${X(42)},276 ${X(37)},292`
-    + ` C${X(34)},300 ${X(26)},300 ${X(24)},292 C${X(21)},274 ${X(20)},252 ${X(10)},226Z"/>`
-    + `<path fill="${THO.taiTrong}" opacity=".7" d="M${X(14)},232 C${X(22)},252 ${X(24)},274 ${X(27)},290 C${X(31)},286 ${X(31)},268 ${X(29)},254 C${X(26)},242 ${X(21)},235 ${X(14)},232Z"/>`
-    + `<path d="M${X(33)},240 q${f(ben * 3)},10 ${f(ben * 3)},22 M${X(36)},268 q${f(ben * 1)},9 ${f(-ben * 1)},16" fill="none" stroke="#D9CBB6" stroke-width="1.1" stroke-linecap="round"/>`;
+function longTo(cx, cy, rx, ry, n) {
+  // các nét lông tơ bên trong: nét cong ngắn và chỏm chữ V
+  let d = '';
+  for (let i = 0; i < n; i++) {
+    const a = R(0, 6.2832), k = Math.sqrt(rnd()) * 0.82;
+    const x = cx + Math.cos(a) * rx * k, y = cy + Math.sin(a) * ry * k;
+    d += i % 3 === 0
+      ? `M${f(x - 3)},${f(y)}q1,5 3,7q1,-4 4,-6`
+      : `M${f(x)},${f(y)}q${f(R(-2, 2))},${f(R(2, 4))} ${f(R(-3, 3))},${f(R(5, 9))}`;
+  }
+  return `<path d="${d}" fill="none" stroke="#D6C8B2" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+function taiTho(ben, chu) {
+  // ben = 1: tai bên phải tranh, -1: tai bên trái tranh. Tai xoè nhẹ ra ngoài, chữ thêu chạy dọc tai.
+  return `<g transform="translate(${THO.x + ben * 28},227) rotate(${-ben * 14})">`
+    + `<path class="nt" d="${xu(0, 44, 16, 50, 24, 0.11)}" fill="${THO.kem}"/>`
+    + `<ellipse cx="0" cy="46" rx="10.5" ry="40" fill="${THO.loTai}"/>`
+    + `<ellipse cx="0" cy="46" rx="10.5" ry="40" fill="none" stroke="#DDCDB6" stroke-width=".8" stroke-dasharray="2 2.4"/>`
+    + `<text class="theu" transform="translate(0,46) rotate(90)" text-anchor="middle" dy=".33em" font-size="15.5">${chu}</text>`
+    + '</g>';
 }
 function thoSau() {
   const cx = THO.x;
   let s = `<g id="tho" transform="${THO.to}">`;
   // thân
-  s += `<path class="nt" d="${xu(cx - 2, 316, 31, 38, 26)}" fill="${THO.kem}"/>`;
-  s += `<path d="${blob(cx + 8, 334, 18, 16, 9, 0.1)}" fill="${THO.bong}" opacity=".5"/>`;
-  s += longTo(cx - 2, 330, 24, 20, 10);
+  s += `<path class="nt" d="${xu(cx - 2, 322, 31, 42, 26)}" fill="${THO.kem}"/>`;
+  s += `<path d="${blob(cx + 8, 340, 18, 18, 9, 0.1)}" fill="${THO.bong}" opacity=".5"/>`;
+  s += longTo(cx - 2, 334, 25, 26, 20);
   // hai chân thõng xuống dưới cánh tay
-  s += `<path class="nt" d="${xu(cx - 22, 358, 14, 11, 16, 0.05)}" fill="${THO.kem}"/>`;
-  s += `<path class="nt" d="${xu(cx + 8, 360, 14, 11, 16, 0.05)}" fill="${THO.kem}"/>`;
-  // đầu
-  s += `<path class="nt" d="${xu(cx, 250, 31, 29, 28)}" fill="${THO.kem}"/>`;
+  s += `<path class="nt" d="${xu(cx - 22, 366, 14, 11, 13, 0.16)}" fill="${THO.kem}"/>`;
+  s += `<path class="nt" d="${xu(cx + 8, 368, 14, 11, 13, 0.16)}" fill="${THO.kem}"/>`;
+  // yếm đeo cổ: nền trắng, viền chỉ nâu vàng, đường may chấm, một trái tim nhỏ
+  s += `<path d="M${cx - 15},274 C${cx - 20},288 ${cx - 16},304 ${cx},306 C${cx + 16},304 ${cx + 20},288 ${cx + 15},274 Q${cx},282 ${cx - 15},274Z" fill="#FFFFFF" stroke="${THO.chiTheu}" stroke-width="1.3" stroke-linejoin="round"/>`;
+  s += `<path d="M${cx - 11},281 C${cx - 14},290 ${cx - 11},300 ${cx},301.5 C${cx + 11},300 ${cx + 14},290 ${cx + 11},281" fill="none" stroke="#D2A866" stroke-width=".9" stroke-dasharray="2 2"/>`;
+  s += `<path d="M${cx},291.5 C${cx - 1.5},288 ${cx - 7},289 ${cx - 6},293 C${cx - 5.3},296 ${cx - 2},297.5 ${cx},299.5 C${cx + 2},297.5 ${cx + 5.3},296 ${cx + 6},293 C${cx + 7},289 ${cx + 1.5},288 ${cx},291.5Z" fill="${THO.chiTheu}"/>`;
+  // đầu, hai bên má và chỏm đầu xù thêm
+  s += `<path class="nt" d="${xu(cx - 27, 262, 10, 10, 9, 0.2)}" fill="${THO.kem}"/>`;
+  s += `<path class="nt" d="${xu(cx + 27, 262, 10, 10, 9, 0.2)}" fill="${THO.kem}"/>`;
+  s += `<path class="nt" d="${xu(cx, 250, 32, 29, 24)}" fill="${THO.kem}"/>`;
+  s += `<path d="${blob(cx - 26, 261, 9, 8, 8, 0.1)}" fill="${THO.kem}"/><path d="${blob(cx + 26, 261, 9, 8, 8, 0.1)}" fill="${THO.kem}"/>`;
   s += `<path d="${blob(cx + 10, 262, 16, 12, 9, 0.1)}" fill="${THO.bong}" opacity=".4"/>`;
   s += `<path d="${blob(cx, 261, 14, 10, 9, 0.08)}" fill="${THO.sang}"/>`;
-  s += longTo(cx, 240, 24, 14, 9);
+  s += longTo(cx, 240, 26, 15, 16);
+  s += `<path d="M${cx - 6},222 q3,-7 7,-1 q3,-6 6,1" fill="${THO.kem}" stroke="${THO.vien}" stroke-width="1.3" stroke-linejoin="round"/>`;
   // mắt hạt đen, mũi hồng, miệng chỉ thêu
   s += `<circle cx="${cx - 12}" cy="250" r="3" fill="#2B2730"/><circle cx="${cx + 12}" cy="250" r="3" fill="#2B2730"/>`;
   s += `<circle cx="${cx - 13}" cy="249" r="1" fill="#FFFFFF"/><circle cx="${cx + 11}" cy="249" r="1" fill="#FFFFFF"/>`;
   s += `<path d="M${cx - 4},256 Q${cx},254 ${cx + 4},256 Q${cx + 3},261 ${cx},262 Q${cx - 3},261 ${cx - 4},256Z" fill="${THO.mui}" stroke="#B8757B" stroke-width=".8"/>`;
   s += `<path d="M${cx},262 v3 M${cx},265 q-3,3 -6,1 M${cx},265 q3,3 6,1" fill="none" stroke="${THO.vien}" stroke-width="1.1" stroke-linecap="round"/>`;
-  // tai bên phải tranh rủ xuống
-  s += taiTho(1);
   return s + '</g>';
 }
 function thoTruoc() {
   const cx = THO.x;
   let s = `<g id="tho-truoc" transform="${THO.to}">`;
-  // tai bên trái tranh tựa lên cánh tay cô gái
-  s += taiTho(-1);
+  // hai tai thêu chữ, vắt ra ngoài: tai trái tựa lên bắp tay, tai phải phủ lên mép giấy gói
+  s += taiTho(-1, THO.chuTrai) + taiTho(1, THO.chuPhai);
   // hai tay thỏ vắt lên cẳng tay
-  s += `<path class="nt" d="${xu(cx - 22, 292, 10, 12, 14, 0.05)}" fill="${THO.kem}"/>`;
-  s += `<path class="nt" d="${xu(cx + 14, 289, 10, 12, 14, 0.05)}" fill="${THO.kem}"/>`;
+  s += `<path class="nt" d="${xu(cx - 22, 305, 10, 12, 11, 0.17)}" fill="${THO.kem}"/>`;
+  s += `<path class="nt" d="${xu(cx + 15, 311, 10, 12, 11, 0.17)}" fill="${THO.kem}"/>`;
   return s + '</g>';
 }
 
@@ -636,21 +656,21 @@ function coGai() {
   s += `<path fill="${da}" d="M10,346 L20,345 L20,372 L10,373Z"/>`;
   s += `<path class="nm" d="M-26,349 q8,3 15,0 M-29,357 q9,3 17,0 M-26,365 q8,2 14,0"/>`;
 
-  // --- bé thỏ bông: thân, chân, đầu, tai phải (nằm sau cánh tay ôm)
+  // --- bé thỏ bông: thân, chân, yếm, đầu (nằm sau cánh tay ôm)
   s += thoSau();
 
-  // --- cánh tay bên trái tranh: gập khuỷu, ôm ngang người bé thỏ
-  s += `<path class="n" fill="${da}" d="M-70,152 C-86,152 -98,164 -100,184 C-106,222 -118,254 -120,282 C-121,300 -114,312 -100,314 C-80,318 -60,321 -40,322 L-38,298 C-54,294 -70,288 -82,280 C-80,256 -76,230 -72,204 C-70,186 -70,168 -70,152 Z"/>`;
-  s += `<path fill="${daBong}" opacity=".28" d="M-82,280 C-80,256 -76,230 -72,204 L-80,206 C-86,236 -91,260 -93,280Z"/>`;
-  s += `<path fill="${daBong}" opacity=".38" d="M-116,300 C-96,310 -64,314 -40,316 L-40,322 C-60,321 -80,318 -100,314 C-108,313 -114,308 -116,300Z"/>`;
+  // --- cánh tay bên trái tranh: gập khuỷu, ôm ngang người bé thỏ (hạ thấp để lộ yếm)
+  s += `<path class="n" fill="${da}" d="M-70,152 C-86,152 -98,164 -100,184 C-106,224 -118,262 -120,298 C-121,316 -114,328 -100,330 C-82,334 -64,337 -46,338 L-44,314 C-58,310 -72,304 -82,296 C-80,266 -76,234 -72,204 C-70,186 -70,168 -70,152 Z"/>`;
+  s += `<path fill="${daBong}" opacity=".28" d="M-82,296 C-80,266 -76,234 -72,204 L-80,206 C-86,240 -91,270 -93,296Z"/>`;
+  s += `<path fill="${daBong}" opacity=".38" d="M-116,316 C-96,326 -68,330 -46,332 L-46,338 C-64,337 -82,334 -100,330 C-108,329 -114,324 -116,316Z"/>`;
   // xoá nét nối vai để cánh tay liền với vai
   s += `<path fill="${da}" d="M-75,155 C-70,153.8 -66,154.4 -65.5,160 L-66,190 L-76,194 C-81,180 -81,166 -75,155Z"/>`;
   // bàn tay ôm lấy sườn bé thỏ
-  s += `<path class="n" fill="${da}" d="M-42,296 C-32,292 -20,294 -15,302 C-11,310 -14,321 -22,325 C-30,328 -38,326 -42,323 Z"/>`;
-  s += `<path fill="${da}" d="M-45,299 L-37,298 L-37,321 L-45,321.5Z"/>`;
-  s += `<path class="nm" d="M-18,303 q-6,1 -10,5 M-15,310 q-7,1 -11,5 M-18,318 q-6,0 -9,3"/>`;
+  s += `<path class="n" fill="${da}" d="M-48,312 C-38,308 -26,310 -21,318 C-17,326 -20,337 -28,341 C-36,344 -44,342 -48,339 Z"/>`;
+  s += `<path fill="${da}" d="M-51,315 L-43,314 L-43,337 L-51,337.5Z"/>`;
+  s += `<path class="nm" d="M-24,319 q-6,1 -10,5 M-21,326 q-7,1 -11,5 M-24,334 q-6,0 -9,3"/>`;
 
-  // --- tai trái và hai tay thỏ vắt lên cánh tay
+  // --- hai tai thêu chữ và hai tay thỏ vắt lên cánh tay
   s += thoTruoc();
   return s;
 }
@@ -883,7 +903,7 @@ function svg() {
   const d = defs();
   const scene = canh();
   return `<svg class="tranh" id="tranh" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="tranh-ten">
-  <title id="tranh-ten">Phác thảo: cô gái búi tóc, không vẽ mắt, mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông màu kem, đứng trên đồng cỏ Đà Lạt có đồi thông, mặt hồ sương và đỉnh LangBiang phía xa</title>
+  <title id="tranh-ten">Phác thảo: cô gái búi tóc, không vẽ mắt, mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông màu kem đeo yếm, hai tai thêu chữ Tặng Vê và Minh Thư, đứng trên đồng cỏ Đà Lạt có đồi thông, mặt hồ sương và đỉnh LangBiang phía xa</title>
   ${d}
   <g filter="url(#rung)"><g clip-path="url(#mep)">
   ${scene}
@@ -926,7 +946,8 @@ h1{font-family:var(--chu-de);font-weight:500;font-style:italic;font-size:clamp(1
 .nx{stroke:${INK};stroke-width:1.1;stroke-linejoin:round;stroke-opacity:.75}
 .nk{fill:none;stroke:#A39A82;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
 .nf{stroke:#5B7BA6;stroke-width:1.3;stroke-linejoin:round;stroke-linecap:round}
-.nt{stroke:#94877B;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+.nt{stroke:#94877B;stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}
+.theu{font-family:'Charm','Lucida Calligraphy','Apple Chancery',cursive;font-weight:700;fill:#B5823A;stroke:#8E6527;stroke-width:.4;paint-order:stroke}
 .ll{fill:#FFFFFF;stroke:#9CC4E4;stroke-width:.8;animation:chop 3.4s ease-in-out infinite}
 @keyframes chop{0%,100%{opacity:.95}50%{opacity:.25}}
 .ghi-chu{margin:0;color:var(--muc-nhat);font-size:.9rem;max-width:60ch}
@@ -945,11 +966,16 @@ const BODY = `
     <figcaption>Đà Lạt, một sáng nhiều sương</figcaption>
   </figure>
 
-  <p class="ghi-chu">Trong tranh: đỉnh LangBiang hai ngọn, đồi thông, nhà thờ nhỏ bên hồ sương, bụi dã quỳ tháng mười một và cẩm tú cầu dưới chân. Đoá hoa vẽ theo bó thật: lily xanh, hồng kem, hồng môn xanh, hoa sao nhỏ, nụ tulip trắng, giấy ren trắng và ruy băng xanh. Tay còn lại ôm bé thỏ bông Franilla màu kem, tai dài rủ.</p>
+  <p class="ghi-chu">Trong tranh: đỉnh LangBiang hai ngọn, đồi thông, nhà thờ nhỏ bên hồ sương, bụi dã quỳ tháng mười một và cẩm tú cầu dưới chân. Đoá hoa vẽ theo bó thật: lily xanh, hồng kem, hồng môn xanh, hoa sao nhỏ, nụ tulip trắng, giấy ren trắng và ruy băng xanh. Tay còn lại ôm bé thỏ bông Franilla lông xù màu kem, cổ đeo yếm, hai tai thêu chữ nâu vàng.</p>
 </main>
 `;
 
 const TITLE = 'Phác thảo Đà Lạt';
+
+// phông chữ thêu trên tai thỏ (tạo bằng: node tools/lay-font.js)
+const FONT_FILE = path.join(__dirname, 'font-theu.css');
+const FONT = fs.existsSync(FONT_FILE) ? fs.readFileSync(FONT_FILE, 'utf8') : '';
+if (!FONT) console.warn('Chưa có tools/font-theu.css, chữ thêu sẽ dùng phông dự phòng. Chạy: node tools/lay-font.js');
 
 const full = `<!doctype html>
 <html lang="vi">
@@ -966,6 +992,8 @@ const full = `<!doctype html>
      trong script rồi chạy lại: node tools/ve-phac-thao.js
      ============================================================ -->
 ${BODY}
+<!-- PHÔNG CHỮ NHÚNG: đừng sửa -->
+<style>${FONT}</style>
 </body>
 </html>
 `;
@@ -973,7 +1001,8 @@ ${BODY}
 const artifact = `<title>${TITLE}</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>${CSS}</style>
-${BODY}`;
+${BODY}
+<style>${FONT}</style>`;
 
 const root = path.join(__dirname, '..');
 fs.writeFileSync(path.join(root, 'phac-thao.html'), full);

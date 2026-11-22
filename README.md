@@ -6,6 +6,8 @@ Thiệp sinh nhật vẽ tay bằng SVG: cô gái mặc váy lụa xanh viền r
 
 - `phac-thao.html`: bản phác thảo số 01. Một file duy nhất, mở offline được bằng cách bấm đúp.
 - `tools/ve-phac-thao.js`: script vẽ ra file trên. Toàn bộ hình là SVG sinh từ code, không dùng ảnh.
+- `tools/font-theu.css`: phông Charm đậm (latin + vietnamese) nhúng base64, dùng cho chữ thêu trên tai thỏ.
+- `tools/lay-font.js`: tải lại phông trên từ Google Fonts khi muốn đổi phông.
 
 ## Vẽ lại
 
@@ -14,6 +16,8 @@ node tools/ve-phac-thao.js
 ```
 
 Vị trí và cỡ cô gái nằm ở hằng `GAI` đầu file. Mỗi phần tranh là một hàm riêng: `coGai()`, `boHoa()`, `vayLua()`, `thoSau()` + `thoTruoc()` (bé thỏ, vẽ hai lớp vì cánh tay nằm xen giữa), `canh()`.
+
+Chữ thêu trên hai tai thỏ và màu chỉ nằm ở hằng `THO` (`chuTrai`, `chuPhai`, `chiTheu`).
 
 ## Quy ước
 
