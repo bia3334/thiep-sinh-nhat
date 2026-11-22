@@ -241,48 +241,96 @@ function daQuy(x, y, s, rot) {
 /* ============================================================
    ĐOÁ HOA: lily xanh, hồng kem, hồng môn xanh, hoa sao nhỏ
    ============================================================ */
-function lily(x, y, size, rot, c1 = '#BBDDF6', c2 = '#93C4EC', c3 = '#EEF7FE') {
-  const petal = (len, w) => `M0,0 C${f(w)},${f(-len * 0.18)} ${f(w * 1.15)},${f(-len * 0.62)} ${f(w * 0.25)},${f(-len * 0.9)}`
-    + ` Q0,${f(-len * 1.05)} ${f(-w * 0.2)},${f(-len * 0.9)} C${f(-w * 1.15)},${f(-len * 0.62)} ${f(-w)},${f(-len * 0.18)} 0,0Z`;
+function lily(x, y, size, rot, mau = 'xanh') {
+  // lily kép: hai tầng sáu cánh mép lượn + cụm cánh nhỏ ở tâm
+  const petal = (len, w, k) =>
+    `M0,0 C${f(w * 0.55)},${f(-len * 0.06)} ${f(w * 1.08)},${f(-len * 0.28)} ${f(w * 0.96)},${f(-len * 0.5)}`
+    + ` C${f(w * 1.12)},${f(-len * 0.62)} ${f(w * 0.7)},${f(-len * 0.8)} ${f(w * 0.4)},${f(-len * 0.88)}`
+    + ` Q${f(w * 0.2 + k)},${f(-len * 1.06)} ${f(k)},${f(-len)}`
+    + ` Q${f(-w * 0.2 + k)},${f(-len * 1.04)} ${f(-w * 0.42)},${f(-len * 0.87)}`
+    + ` C${f(-w * 0.74)},${f(-len * 0.78)} ${f(-w * 1.14)},${f(-len * 0.6)} ${f(-w * 0.94)},${f(-len * 0.48)}`
+    + ` C${f(-w * 1.06)},${f(-len * 0.28)} ${f(-w * 0.55)},${f(-len * 0.06)} 0,0Z`;
+  const M = mau === 'xanh'
+    ? { ngoai: 'url(#cx2)', trong: 'url(#cx1)', tam: '#E8F4FD', gan: '#F3FAFF' }
+    : { ngoai: 'url(#ct2)', trong: 'url(#ct1)', tam: '#FFFDF0', gan: '#DCE5EF' };
   let s = `<g transform="translate(${f(x)},${f(y)}) rotate(${f(rot)})">`;
-  for (const [off, k, wk, fill] of [[60, 0.92, 0.3, c2], [0, 1, 0.36, c1]]) {
-    for (let i = 0; i < 3; i++) {
-      const a = off + i * 120 + R(-7, 7);
-      const len = size * k * R(0.92, 1.06), w = size * wk;
-      s += `<g transform="rotate(${f(a)})"><path class="n nh" d="${petal(len, w)}" fill="${fill}"/>`
-        + `<path d="M0,${f(-len * 0.14)} Q${f(w * 0.14)},${f(-len * 0.5)} 0,${f(-len * 0.84)}" fill="none" stroke="${c3}" stroke-width="1.6" stroke-linecap="round" opacity=".9"/></g>`;
+  for (const [off, k, wk, fill] of [[30, 1, 0.31, M.ngoai], [0, 0.9, 0.33, M.trong]]) {
+    for (let i = 0; i < 6; i++) {
+      const a = off + i * 60 + R(-6, 6);
+      const len = size * k * R(0.93, 1.05), w = size * wk;
+      s += `<g transform="rotate(${f(a)})"><path class="nf" d="${petal(len, w, R(-2, 2))}" fill="${fill}"/>`
+        + `<path d="M0,${f(-len * 0.16)} Q${f(w * 0.12)},${f(-len * 0.5)} 0,${f(-len * 0.86)}" fill="none" stroke="${M.gan}" stroke-width="1.5" stroke-linecap="round" opacity=".9"/></g>`;
     }
   }
-  s += `<circle r="${f(size * 0.12)}" fill="${c3}"/>`;
   for (let i = 0; i < 5; i++) {
-    const a = i * 72 + R(-14, 14), l = size * R(0.26, 0.38);
-    s += `<g transform="rotate(${f(a)})"><path d="M0,0 Q${f(l * 0.2)},${f(-l * 0.5)} 0,${f(-l)}" fill="none" stroke="#9FB7A4" stroke-width="1"/>`
-      + `<ellipse cx="0" cy="${f(-l)}" rx="1.5" ry="2.6" fill="#E3BE78"/></g>`;
+    const a = 14 + i * 72 + R(-8, 8), len = size * R(0.4, 0.5), w = size * 0.17;
+    s += `<g transform="rotate(${f(a)})"><path class="nf" d="${petal(len, w, 0)}" fill="${M.tam}"/></g>`;
   }
+  s += `<circle r="${f(size * 0.07)}" fill="#F6E7B4" stroke="#5B7BA6" stroke-width=".8"/>`;
   return s + '</g>';
 }
 function rose(x, y, r, rot) {
+  // hồng kem: viền ngoài năm cánh, bên trong là các lớp cánh xếp so le
   let s = `<g transform="translate(${f(x)},${f(y)}) rotate(${f(rot)})">`;
-  s += `<path class="n nh" d="${blob(0, 0, r, r * 0.95, 8, 0.08)}" fill="#FFF9EA"/>`;
-  s += `<path d="${blob(0, r * 0.05, r * 0.55, r * 0.5, 7, 0.1)}" fill="#F4E6BC" opacity=".75"/>`;
-  s += `<path class="nk" d="M${f(-r * 0.85)},${f(r * 0.1)} C${f(-r * 0.7)},${f(-r * 0.75)} ${f(r * 0.3)},${f(-r * 0.95)} ${f(r * 0.8)},${f(-r * 0.3)}"/>`;
-  s += `<path class="nk" d="M${f(r * 0.85)},${f(-r * 0.05)} C${f(r * 0.75)},${f(r * 0.7)} ${f(-r * 0.2)},${f(r * 0.95)} ${f(-r * 0.75)},${f(r * 0.45)}"/>`;
-  s += `<path class="nk" d="M${f(-r * 0.45)},${f(r * 0.05)} C${f(-r * 0.45)},${f(-r * 0.5)} ${f(r * 0.45)},${f(-r * 0.5)} ${f(r * 0.42)},0`
-    + ` C${f(r * 0.4)},${f(r * 0.42)} ${f(-r * 0.25)},${f(r * 0.42)} ${f(-r * 0.22)},${f(r * 0.02)}`
-    + ` C${f(-r * 0.2)},${f(-r * 0.22)} ${f(r * 0.18)},${f(-r * 0.22)} ${f(r * 0.16)},${f(r * 0.02)}"/>`;
+  const vien = [];
+  for (let i = 0; i < 40; i++) {
+    const a = i / 40 * 6.2832, k = 1 + 0.06 * Math.cos(5 * a);
+    vien.push([Math.cos(a) * r * k, Math.sin(a) * r * k]);
+  }
+  s += `<path class="nf" d="${smoothClosed(vien)}" fill="#FFFDF5"/>`;
+  for (const [k, fill, n, off] of [[0.8, '#FFFAEA', 3, 20], [0.6, '#FBF3DA', 3, 80], [0.4, '#F7EAC6', 2, 140], [0.22, '#F1DFAE', 2, 30]]) {
+    const rr = r * k;
+    s += `<circle r="${f(rr)}" fill="${fill}"/>`;
+    for (let i = 0; i < n; i++) {
+      const a0 = (off + i * (360 / n)) * Math.PI / 180, a1 = a0 + (360 / n - 24) * Math.PI / 180;
+      s += `<path class="nk" d="M${f(Math.cos(a0) * rr)},${f(Math.sin(a0) * rr)} A${f(rr)},${f(rr)} 0 0 1 ${f(Math.cos(a1) * rr * 0.84)},${f(Math.sin(a1) * rr * 0.84)}"/>`;
+    }
+  }
+  s += `<path class="nk" d="M${f(-r * 0.08)},${f(r * 0.03)} q${f(r * 0.08)},${f(-r * 0.2)} ${f(r * 0.2)},${f(-r * 0.05)}"/>`;
   return s + '</g>';
 }
 function hongMon(x, y, s, rot) {
   // hoa hồng môn nhuộm xanh: mo hình tim + lõi kem
   return `<g transform="translate(${f(x)},${f(y)}) rotate(${f(rot)})">`
-    + `<path class="n nh" fill="#AED3F1" d="M0,0 C${f(-s * 0.35)},${f(s * 0.35)} ${f(-s * 0.95)},${f(s * 0.05)} ${f(-s * 0.8)},${f(-s * 0.5)}`
+    + `<path class="nf" fill="url(#cx1)" d="M0,0 C${f(-s * 0.35)},${f(s * 0.35)} ${f(-s * 0.95)},${f(s * 0.05)} ${f(-s * 0.8)},${f(-s * 0.5)}`
     + ` C${f(-s * 0.65)},${f(-s * 0.95)} ${f(-s * 0.2)},${f(-s * 1.1)} 0,${f(-s * 1.38)}`
     + ` C${f(s * 0.2)},${f(-s * 1.1)} ${f(s * 0.65)},${f(-s * 0.95)} ${f(s * 0.8)},${f(-s * 0.5)}`
     + ` C${f(s * 0.95)},${f(s * 0.05)} ${f(s * 0.35)},${f(s * 0.35)} 0,0Z"/>`
-    + `<path d="M${f(-s * 0.5)},${f(-s * 0.3)} C${f(-s * 0.45)},${f(-s * 0.7)} ${f(-s * 0.15)},${f(-s * 0.9)} 0,${f(-s * 1.2)}" fill="none" stroke="#E2F1FC" stroke-width="2.4" stroke-linecap="round" opacity=".9"/>`
-    + `<path d="M0,${f(-s * 0.1)} Q${f(s * 0.12)},${f(-s * 0.45)} ${f(s * 0.06)},${f(-s * 0.8)}" fill="none" stroke="${INK}" stroke-width="${f(s * 0.2 + 2)}" stroke-linecap="round" opacity=".8"/>`
-    + `<path d="M0,${f(-s * 0.1)} Q${f(s * 0.12)},${f(-s * 0.45)} ${f(s * 0.06)},${f(-s * 0.8)}" fill="none" stroke="#F6E8B8" stroke-width="${f(s * 0.2)}" stroke-linecap="round"/>`
+    + `<path d="M${f(-s * 0.55)},${f(-s * 0.3)} C${f(-s * 0.5)},${f(-s * 0.7)} ${f(-s * 0.2)},${f(-s * 0.92)} ${f(-s * 0.04)},${f(-s * 1.2)}" fill="none" stroke="#EAF5FD" stroke-width="2.6" stroke-linecap="round" opacity=".95"/>`
+    + `<path d="M0,${f(-s * 0.12)} L0,${f(-s * 1.2)} M0,${f(-s * 0.3)} Q${f(s * 0.4)},${f(-s * 0.4)} ${f(s * 0.62)},${f(-s * 0.62)} M0,${f(-s * 0.3)} Q${f(-s * 0.4)},${f(-s * 0.4)} ${f(-s * 0.62)},${f(-s * 0.62)}" fill="none" stroke="#7FAFDD" stroke-width="1" stroke-linecap="round" opacity=".8"/>`
+    + `<path d="M0,${f(-s * 0.08)} Q${f(s * 0.14)},${f(-s * 0.42)} ${f(s * 0.08)},${f(-s * 0.74)}" fill="none" stroke="#5B7BA6" stroke-width="${f(s * 0.2 + 2)}" stroke-linecap="round"/>`
+    + `<path d="M0,${f(-s * 0.08)} Q${f(s * 0.14)},${f(-s * 0.42)} ${f(s * 0.08)},${f(-s * 0.74)}" fill="none" stroke="#F8EDC4" stroke-width="${f(s * 0.2)}" stroke-linecap="round"/>`
     + '</g>';
+}
+function tulip(x, y, s, rot) {
+  // nụ tulip trắng
+  return `<g transform="translate(${f(x)},${f(y)}) rotate(${f(rot)})">`
+    + `<path class="nf" fill="url(#ct1)" d="M0,0 C${f(-s * 0.55)},${f(-s * 0.1)} ${f(-s * 0.62)},${f(-s * 0.8)} ${f(-s * 0.14)},${f(-s * 1.28)} Q0,${f(-s * 1.02)} ${f(s * 0.14)},${f(-s * 1.28)} C${f(s * 0.62)},${f(-s * 0.8)} ${f(s * 0.55)},${f(-s * 0.1)} 0,0Z"/>`
+    + `<path class="nk" d="M${f(-s * 0.14)},${f(-s * 1.22)} Q${f(s * 0.06)},${f(-s * 0.6)} 0,${f(-s * 0.06)} M${f(s * 0.14)},${f(-s * 1.22)} Q${f(s * 0.34)},${f(-s * 0.6)} ${f(s * 0.14)},${f(-s * 0.1)}"/>`
+    + '</g>';
+}
+function cumSao(x, y, n, spread) {
+  // chùm hoa sao xanh nhỏ: vài nụ + các bông năm cánh
+  let s = '';
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * 6.2832 + R(-0.5, 0.5), d = spread * (i === 0 ? 0.1 : R(0.55, 1));
+    pts.push([x + Math.cos(a) * d, y + Math.sin(a) * d]);
+  }
+  s += `<path d="${pts.map((p) => `M${f(x)},${f(y)}L${P(p)}`).join('')}" stroke="#7FA98A" stroke-width="1.2" fill="none"/>`;
+  for (let i = 0; i < 3; i++) {
+    const a = R(0, 6.2832), d = spread * R(0.9, 1.25);
+    s += `<ellipse cx="${f(x + Math.cos(a) * d)}" cy="${f(y + Math.sin(a) * d)}" rx="2.6" ry="3.8" transform="rotate(${f(R(0, 180))} ${f(x + Math.cos(a) * d)} ${f(y + Math.sin(a) * d)})" fill="#B9D3C4" stroke="#5B7BA6" stroke-width=".7"/>`;
+  }
+  for (const p of pts) s += hoaSao(p[0], p[1], R(1.1, 1.45), R(0, 72));
+  return s;
+}
+function ren(x, y, r, rot) {
+  return `<use href="#ren" transform="translate(${f(x)},${f(y)}) rotate(${f(rot)}) scale(${f(r / 7)})"/>`;
+}
+function hatDa(x, y, r) {
+  // hạt đá nhỏ đính trên cánh hoa
+  return `<circle cx="${f(x)}" cy="${f(y)}" r="${r}" fill="#E4F6FF" stroke="#6FB2DA" stroke-width=".8"/><circle cx="${f(x - r * 0.3)}" cy="${f(y - r * 0.3)}" r="${f(r * 0.35)}" fill="#FFFFFF"/>`;
 }
 function hoaSao(x, y, s, rot) {
   return `<use href="#sao5" transform="translate(${f(x)},${f(y)}) rotate(${f(rot)}) scale(${f(s)})"/>`;
@@ -305,8 +353,12 @@ const BO = (() => {
 const P = (pt) => `${f(pt[0])},${f(pt[1])}`;
 
 function boHoa() {
-  const { T, bp, goc, v } = BO;
+  const { T, bp, goc, u, v } = BO;
   const Tl = [T[0] - 9 * v[0], T[1] - 9 * v[1]], Tr = [T[0] + 9 * v[0], T[1] + 9 * v[1]];
+  const gocV = Math.atan2(v[1], v[0]);
+  // hướng (độ) của vectơ (a,b) trong hệ bó hoa, để xoay lá chĩa ra ngoài
+  const huong = (a, b) => Math.atan2(a * u[1] + b * v[1], a * u[0] + b * v[0]) * 180 / Math.PI;
+  const cham = (d, w = 6, gap = 8.5) => `<path d="${d}" fill="none" stroke="#FFFFFF" stroke-width="${w}" stroke-dasharray="0.1 ${gap}" stroke-linecap="round"/>`;
   let s = '<g id="bo-hoa">';
 
   // --- cán hoa (thò ra dưới bàn tay)
@@ -314,60 +366,61 @@ function boHoa() {
   s += `<path d="M${P(T)} L-58,400" stroke="#F1F6FA" stroke-width="14" stroke-linecap="round"/>`;
   s += `<path d="M-40,374 l10,9 M-48,383 l10,9" stroke="#9FD5EA" stroke-width="3" stroke-linecap="round"/>`;
 
-  // --- giấy gói phía sau (xoè như quạt)
-  const La = bp(16, -112), Lb = bp(102, -76), C = bp(134, 2), Rb = bp(94, 88), Ra = bp(6, 116);
-  const sau = `M${P(Tl)} L${P(La)} Q${P(bp(52, -84))} ${P(Lb)} Q${P(bp(104, -34))} ${P(C)} Q${P(bp(100, 40))} ${P(Rb)} Q${P(bp(44, 92))} ${P(Ra)} L${P(Tr)}Z`;
-  s += `<path class="n" d="${sau}" fill="#E7EFF6"/>`;
-  s += `<path d="${sau}" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="0.1 8.5" stroke-linecap="round" opacity=".95"/>`;
-  // lớp giấy sau thứ hai, lệch một chút cho có tầng
-  const sau2 = `M${P(Tl)} L${P(bp(34, -96))} Q${P(bp(66, -62))} ${P(bp(112, -34))} Q${P(bp(96, 12))} ${P(bp(116, 52))} Q${P(bp(60, 70))} ${P(bp(26, 102))} L${P(Tr)}Z`;
-  s += `<path class="n nh" d="${sau2}" fill="#F5F9FC" opacity=".92"/>`;
-  // hoa văn ren thêu trên giấy
-  for (const [a, b, r] of [[96, -52, 7], [112, -6, 8], [96, 44, 7], [70, -78, 6], [62, 82, 6], [118, 22, 5]]) {
-    const [x, y] = bp(a, b);
-    s += `<g transform="translate(${f(x)},${f(y)})" fill="none" stroke="#B4C6DB" stroke-width="1" stroke-linecap="round">`
-      + `<circle r="${r * 0.3}"/><path d="M0,${-r} v${r * 0.5} M0,${r} v${-r * 0.5} M${-r},0 h${r * 0.5} M${r},0 h${-r * 0.5} M${-r * 0.7},${-r * 0.7} l${r * 0.35},${r * 0.35} M${r * 0.7},${r * 0.7} l${-r * 0.35},${-r * 0.35} M${r * 0.7},${-r * 0.7} l${-r * 0.35},${r * 0.35} M${-r * 0.7},${r * 0.7} l${r * 0.35},${-r * 0.35}"/></g>`;
+  // --- giấy gói phía sau: hai lớp xoè như quạt, mép ren vỏ sò
+  const sau = `M${P(Tl)} L${P(bp(18, -124))} Q${P(bp(58, -94))} ${P(bp(112, -84))} Q${P(bp(114, -38))} ${P(bp(148, 2))} Q${P(bp(110, 44))} ${P(bp(104, 98))} Q${P(bp(48, 102))} ${P(bp(6, 128))} L${P(Tr)}Z`;
+  s += `<path class="n" d="${sau}" fill="#E4EDF5"/>` + cham(sau);
+  const sau2 = `M${P(Tl)} L${P(bp(38, -106))} Q${P(bp(72, -70))} ${P(bp(126, -40))} Q${P(bp(106, 10))} ${P(bp(130, 56))} Q${P(bp(68, 78))} ${P(bp(28, 112))} L${P(Tr)}Z`;
+  s += `<path class="n nh" d="${sau2}" fill="#F5F9FC"/>` + cham(sau2, 4.5, 7);
+  // ren thêu dọc mép giấy
+  for (const [a, b, r] of [[44, -108, 7], [74, -92, 6], [100, -78, 7], [124, -60, 6], [138, -22, 7], [140, 10, 6], [124, 38, 7], [112, 72, 6], [86, 92, 7], [54, 104, 6], [24, 116, 6]]) {
+    s += ren(...bp(a, b), r, R(0, 60));
   }
 
-  // --- lá đệm
-  s += la(...bp(40, -70), 34, goc - 150, '#8FB79A');
-  s += la(...bp(60, 60), 30, goc - 40, '#8FB79A');
-  s += la(...bp(-20, 70), 30, goc + 10, '#7FAA8C');
+  // --- nền hoa cho đầy, không hở giấy
+  s += `<path d="${blob(...bp(28, -4), 90, 80, 14, 0.07, gocV)}" fill="#CFE3F3"/>`;
+  s += `<path d="${blob(...bp(30, -4), 80, 62, 12, 0.1, gocV)}" fill="#B7D5EF" opacity=".85"/>`;
+  // lá đệm thò ra quanh mép
+  for (const [a, b, len, lech] of [[104, -44, 30, 0], [114, 34, 28, 10], [124, -6, 26, -8], [44, -100, 30, 12], [70, 88, 28, -10], [18, 110, 30, 0], [-24, -86, 28, 20], [-40, 84, 28, -10], [88, 70, 24, 14]]) {
+    s += la(...bp(a - 14, b * 0.86), len, huong(a - 20, b) + lech, pick(['#8FB79A', '#7FAA8C', '#9CC2A4']));
+  }
 
-  // --- hoa (từ sau ra trước)
-  s += hongMon(...bp(62, -14), 30, goc - 6);
-  s += lily(...bp(16, -66), 30, goc - 70, '#FFFFFF', '#EEF4FA', '#FFFDF2');
-  s += lily(...bp(-2, 84), 28, goc + 60, '#FFFFFF', '#EEF4FA', '#FFFDF2');
-  // chùm hoa sao xanh
-  for (const [a, b] of [[80, 52], [72, 64], [88, 62], [78, 74], [66, 50]]) s += hoaSao(...bp(a, b), R(0.9, 1.2), R(0, 72));
-  for (const [a, b] of [[44, -92], [34, -100], [52, -100]]) s += hoaSao(...bp(a, b), R(0.85, 1.1), R(0, 72));
-  s += rose(...bp(58, 34), 16, 20);
-  s += rose(...bp(-30, -40), 18, -30);
-  s += lily(...bp(30, -10), 45, goc + 12);
-  s += rose(...bp(22, 46), 17, 60);
-  s += lily(...bp(-16, 26), 42, goc + 62);
-  s += hongMon(...bp(-36, -62), 24, goc - 118);
-  s += rose(...bp(-42, 0), 16, 10);
-  for (const [a, b] of [[-8, -62], [0, -72], [-14, -74], [-26, 66], [-34, 58], [-18, 58]]) s += hoaSao(...bp(a, b), R(0.85, 1.15), R(0, 72));
+  // --- hoa, vẽ từ sau ra trước
+  s += hongMon(...bp(88, -30), 36, goc - 12);
+  for (const [a, b, r] of [[50, 104, goc + 66], [60, 96, goc + 48], [74, 88, goc + 30]]) s += tulip(...bp(a, b), 17, r);
+  s += lily(...bp(64, -82), 30, goc - 60, 'trang');
+  s += cumSao(...bp(102, 62), 7, 19);
+  s += rose(...bp(100, 20), 18, 10);
+  s += lily(...bp(6, 96), 30, goc + 70, 'trang');
+  s += cumSao(...bp(30, 108), 5, 13);
+  s += rose(...bp(14, -80), 20, -20);
+  s += rose(...bp(56, 52), 20, 40);
+  s += lily(...bp(44, -14), 52, goc + 8);
+  s += hongMon(...bp(-20, -84), 30, goc - 112);
+  s += cumSao(...bp(-10, -50), 7, 17);
+  s += lily(...bp(-12, 30), 50, goc + 50);
+  s += rose(...bp(-38, 66), 18, 70);
+  s += rose(...bp(-46, -16), 23, 0);
+  s += cumSao(...bp(-54, 28), 4, 10);
+  s += cumSao(...bp(78, -66), 4, 11);
+  // hạt đá đính trên cánh
+  for (const [a, b] of [[62, 4], [30, -36], [10, 46], [-30, 12], [72, -30], [-2, -66], [42, 72], [-44, 52], [90, 30], [22, 8], [-40, -30], [60, -56]]) {
+    s += hatDa(...bp(a, b), R(1.8, 2.6));
+  }
 
-  // --- giấy gói phía trước: hai vạt chéo nhau
-  const phai = `M${P(Tr)} L${P(bp(-14, 112))} Q${P(bp(-18, 62))} ${P(bp(-56, -2))} L${P(Tl)}Z`;
-  s += `<path class="n" d="${phai}" fill="#EEF4F9"/>`;
-  s += `<path d="M${P(bp(-14, 112))} Q${P(bp(-18, 62))} ${P(bp(-56, -2))}" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="0.1 8.5" stroke-linecap="round"/>`;
-  const trai = `M${P(Tl)} L${P(bp(-6, -110))} Q${P(bp(-30, -48))} ${P(bp(-64, 26))} L${P(Tr)}Z`;
-  s += `<path class="n" d="${trai}" fill="#F8FBFD"/>`;
-  s += `<path d="M${P(bp(-6, -110))} Q${P(bp(-30, -48))} ${P(bp(-64, 26))}" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="0.1 8.5" stroke-linecap="round"/>`;
-  s += `<path d="M${P(bp(-17, -96))} Q${P(bp(-40, -42))} ${P(bp(-74, 22))}" fill="none" stroke="#B4C6DB" stroke-width="1" stroke-dasharray="3 4"/>`;
-  // thêu ren trên vạt trước
-  for (const [a, b, r] of [[-52, -52, 6], [-80, -22, 5], [-70, 44, 5], [-44, 74, 6], [-100, 4, 4]]) {
-    const [x, y] = bp(a, b);
-    s += `<g transform="translate(${f(x)},${f(y)})" fill="none" stroke="#B4C6DB" stroke-width="1" stroke-linecap="round">`
-      + `<circle r="${r * 0.3}"/><path d="M0,${-r} v${r * 0.5} M0,${r} v${-r * 0.5} M${-r},0 h${r * 0.5} M${r},0 h${-r * 0.5}"/>`
-      + `<path d="M${r * 1.4},${-r * 0.4} q${r * 0.8},${-r * 0.6} ${r * 1.4},${r * 0.2}"/></g>`;
+  // --- giấy gói phía trước: hai vạt chéo nhau, khoét sâu để lộ nhiều hoa
+  const phaiMep = `M${P(bp(-10, 122))} Q${P(bp(-30, 64))} ${P(bp(-74, -6))}`;
+  s += `<path class="n" d="M${P(Tr)} L${P(bp(-10, 122))} Q${P(bp(-30, 64))} ${P(bp(-74, -6))} L${P(Tl)}Z" fill="#EEF4F9"/>` + cham(phaiMep);
+  const traiMep = `M${P(bp(-24, -120))} Q${P(bp(-50, -52))} ${P(bp(-82, 26))}`;
+  s += `<path class="n" d="M${P(Tl)} L${P(bp(-24, -120))} Q${P(bp(-50, -52))} ${P(bp(-82, 26))} L${P(Tr)}Z" fill="#F8FBFD"/>` + cham(traiMep);
+  s += `<path d="M${P(bp(-35, -108))} Q${P(bp(-60, -46))} ${P(bp(-92, 22))}" fill="none" stroke="#B4C6DB" stroke-width="1" stroke-dasharray="3 4"/>`;
+  s += `<path d="M${P(bp(-24, 110))} Q${P(bp(-42, 58))} ${P(bp(-84, 0))}" fill="none" stroke="#B4C6DB" stroke-width="1" stroke-dasharray="3 4"/>`;
+  // ren thêu trên vạt trước
+  for (const [a, b, r] of [[-50, -84, 7], [-70, -52, 6], [-92, -22, 6], [-112, 2, 5], [-62, 86, 7], [-78, 52, 6], [-100, 26, 5], [-128, -8, 4.5]]) {
+    s += ren(...bp(a, b), r, R(0, 60));
   }
   // nếp gấp giấy
-  s += `<path class="nm" d="M${P(T)} Q${P(bp(-90, -30))} ${P(bp(-30, -78))}"/>`;
-  s += `<path class="nm" d="M${P(T)} Q${P(bp(-80, 40))} ${P(bp(-30, 84))}"/>`;
+  s += `<path class="nm" d="M${P(T)} Q${P(bp(-104, -34))} ${P(bp(-44, -86))}"/>`;
+  s += `<path class="nm" d="M${P(T)} Q${P(bp(-96, 42))} ${P(bp(-46, 92))}"/>`;
   // nơ ruy băng xanh buộc ở cổ bó hoa
   const [nx, ny] = bp(-(BO.len - 26), 0);
   s += `<g transform="translate(${f(nx)},${f(ny)}) rotate(${f(goc)}) scale(.82)">`
@@ -487,8 +540,8 @@ function coGai() {
 
   // --- cánh tay bên phải tranh: phải vẽ SAU váy để cẳng tay nằm trước váy
   //     (bắp tay sẽ bị bó hoa che, cẳng tay đỡ dưới bó hoa rồi vòng ra nắm cổ bó)
-  s += `<path class="n" fill="${da}" d="M70,152 C86,152 98,164 100,184 C106,226 122,270 126,304 C128,324 120,340 106,343 C78,352 44,364 14,372 L8,344 C40,338 72,326 96,312 C90,280 78,240 72,204 C70,186 70,168 70,152 Z"/>`;
-  s += `<path fill="${daBong}" opacity=".4" d="M120,330 C100,342 60,354 16,366 L14,372 C44,364 78,352 106,343 C114,341 119,336 120,330Z"/>`;
+  s += `<path class="n" fill="${da}" d="M70,152 C86,152 98,164 100,184 C106,226 124,272 128,308 C130,328 122,344 108,348 C80,356 46,366 14,374 L8,344 C40,338 72,326 96,312 C90,280 78,240 72,204 C70,186 70,168 70,152 Z"/>`;
+  s += `<path fill="${daBong}" opacity=".4" d="M122,334 C102,347 62,358 16,368 L14,374 C46,366 80,356 108,348 C116,346 121,341 122,334Z"/>`;
 
   // --- ruy băng thả từ chỗ buộc
   const ruy = (pts, w) => {
@@ -551,8 +604,8 @@ function coGai() {
   s += boHoa();
 
   // --- hai bàn tay ôm bó hoa
-  s += `<path class="n" fill="${da}" d="M16,343 C4,337 -14,337 -25,343 C-34,349 -33,364 -24,370 C-10,376 4,375 16,372 Z"/>`;
-  s += `<path fill="${da}" d="M10,346 L20,345 L20,370 L10,371Z"/>`;
+  s += `<path class="n" fill="${da}" d="M16,343 C4,337 -14,337 -25,343 C-34,349 -33,365 -24,371 C-10,377 4,377 16,374 Z"/>`;
+  s += `<path fill="${da}" d="M10,346 L20,345 L20,372 L10,373Z"/>`;
   s += `<path class="nm" d="M-26,349 q8,3 15,0 M-29,357 q9,3 17,0 M-26,365 q8,2 14,0"/>`;
   s += `<path class="n" fill="${da}" d="M-57,366 C-60,380 -52,391 -39,391 C-28,391 -19,384 -19,375 C-19,366 -28,359 -39,357 Z"/>`;
   s += `<path class="nm" d="M-25,369 q-8,1 -12,6 M-22,376 q-8,2 -13,7 M-27,384 q-6,0 -10,4"/>`;
@@ -757,6 +810,15 @@ function defs() {
       <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="3"/>
       <feColorMatrix values="0 0 0 0 0.24  0 0 0 0 0.27  0 0 0 0 0.38  0 0 0 0.16 0"/>
     </filter>
+    <linearGradient id="cx1" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#8FC0EC"/><stop offset=".55" stop-color="#B9DBF6"/><stop offset="1" stop-color="#E6F3FD"/></linearGradient>
+    <linearGradient id="cx2" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#7BB0E4"/><stop offset=".6" stop-color="#A3CDF1"/><stop offset="1" stop-color="#D0E7FA"/></linearGradient>
+    <linearGradient id="ct1" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#EEF2DC"/><stop offset=".5" stop-color="#FFFFFF"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+    <linearGradient id="ct2" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#E2ECF4"/><stop offset=".6" stop-color="#F4F8FC"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+    <g id="ren" fill="none" stroke="#A6BAD4" stroke-width=".9" stroke-linecap="round">
+      <circle r="1.4"/>
+      <ellipse cx="0" cy="-4.4" rx="2" ry="3"/><ellipse cx="0" cy="-4.4" rx="2" ry="3" transform="rotate(72)"/><ellipse cx="0" cy="-4.4" rx="2" ry="3" transform="rotate(144)"/><ellipse cx="0" cy="-4.4" rx="2" ry="3" transform="rotate(216)"/><ellipse cx="0" cy="-4.4" rx="2" ry="3" transform="rotate(288)"/>
+      <path d="M7,6 q5,0 8,4 M7,6 q1,5 6,7"/>
+    </g>
     <g id="h4"><path d="${h4}" stroke="${INK}" stroke-width=".7" stroke-opacity=".45"/><circle r="1.2" fill="#FFFFFF" opacity=".9"/></g>
     <g id="sao5"><path d="${sao}" fill="#86AEE2" stroke="${INK}" stroke-width=".8" stroke-opacity=".7"/><circle r="1.5" fill="#FFFFFF"/></g>
     <g id="dq"><g fill="#F4C23C" stroke="${INK}" stroke-width=".7" stroke-opacity=".6">${dq}</g><circle r="4.6" fill="#C9801F" stroke="${INK}" stroke-width=".7" stroke-opacity=".6"/></g>
@@ -767,7 +829,7 @@ function defs() {
 function lopLapLanh() {
   const { bp } = BO;
   let s = '<g class="lap-lanh">';
-  for (const [a, b, r] of [[46, -14, 6], [8, 30, 5], [70, 30, 4.5], [-22, -36, 4.5], [84, -20, 4], [-4, 78, 4], [30, -62, 4], [-40, 6, 3.6], [60, 60, 3.6]]) {
+  for (const [a, b, r] of [[56, -24, 6], [-2, 40, 5.5], [104, 14, 4.5], [-50, -24, 4.5], [96, -40, 4], [10, 92, 4], [20, -84, 4], [62, 48, 4], [-34, 70, 3.6], [70, -86, 3.6]]) {
     const [x, y] = bp(a, b);
     s += lapLanh(GAI.x + x * GAI.s, GAI.y + y * GAI.s, r * GAI.s);
   }
@@ -819,7 +881,8 @@ h1{font-family:var(--chu-de);font-weight:500;font-style:italic;font-size:clamp(1
 .nh{stroke-width:1.5}
 .nm{fill:none;stroke:${INK};stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;opacity:.72}
 .nx{stroke:${INK};stroke-width:1.1;stroke-linejoin:round;stroke-opacity:.75}
-.nk{fill:none;stroke:#A08C5E;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.nk{fill:none;stroke:#A39A82;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
+.nf{stroke:#5B7BA6;stroke-width:1.3;stroke-linejoin:round;stroke-linecap:round}
 .tranh[data-vay="lua"] #vay-bac-ha,.tranh[data-vay="bac-ha"] #vay-lua{display:none}
 .ll{fill:#FFFFFF;stroke:#9CC4E4;stroke-width:.8;animation:chop 3.4s ease-in-out infinite}
 @keyframes chop{0%,100%{opacity:.95}50%{opacity:.25}}
