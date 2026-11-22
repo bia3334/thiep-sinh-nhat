@@ -479,81 +479,80 @@ function vayLua() {
 }
 
 /* ============================================================
-   BÉ THỎ BÔNG FRANILLA: thỏ lông xù màu kem, tai dài rủ có thêu chữ, cổ đeo yếm.
+   BÉ THỎ BÔNG FRANILLA: thỏ bông màu kem, tai dài rủ có thêu chữ, cổ đeo yếm.
    Vẽ làm hai lớp vì cánh tay cô gái nằm xen giữa:
    thoSau() = thân, chân, yếm, đầu  →  cánh tay ôm  →  thoTruoc() = hai tai, hai tay thỏ
+   Giữ cho bé MỀM và TRÒN: viền là các múi bông tròn, nét nhạt, không có góc nhọn.
    ============================================================ */
 const THO = {
   x: -50,
   to: 'translate(-50 282) scale(1.15) translate(50 -290)', // vị trí + cỡ bé thỏ trong vòng tay
-  kem: '#FBF5EA', bong: '#E9DCC8', sang: '#FFFDF8', vien: '#94877B', loTai: '#F6EADB', mui: '#E79C9F',
+  kem: '#FCF7EE', bong: '#EEE3D2', sang: '#FFFEFA', vien: '#B3A38F', loTai: '#F8EEE0', mui: '#EDA3A6', ma: '#F6B8B4',
   chuTrai: 'Tặng Vê',   // chữ thêu trên tai bên trái tranh
   chuPhai: 'Minh Thư',  // chữ thêu trên tai bên phải tranh
   chiTheu: '#B5823A',   // màu chỉ thêu nâu vàng
 };
-function xu(cx, cy, rx, ry, n = 22, amp = 0.15) {
-  // viền lông xù: từng chỏm lông nhọn, hơi xoáy về một phía
+function xu(cx, cy, rx, ry, n = 16, amp = 0.07) {
+  // viền bông mềm: các múi tròn như mây chạy quanh hình bầu dục
   const pt = (a, k) => [cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k];
+  const off = R(0, 6.2832 / n);
   let d = '';
   for (let i = 0; i < n; i++) {
-    const a0 = (i / n) * 6.2832, a1 = ((i + 1) / n) * 6.2832;
-    const aTip = a0 + (a1 - a0) * R(0.55, 0.82);
-    const kTip = 1 + amp * R(0.55, 1.2);
-    if (i === 0) d += `M${P(pt(a0, 1 - amp * 0.3))}`;
-    d += `Q${P(pt(a0 + (aTip - a0) * 0.5, 1 + amp * 0.75))} ${P(pt(aTip, kTip))}`
-      + `Q${P(pt(aTip + (a1 - aTip) * 0.3, 1 + amp * 0.05))} ${P(pt(a1, 1 - amp * 0.3))}`;
+    const a0 = off + (i / n) * 6.2832, a1 = off + ((i + 1) / n) * 6.2832;
+    if (i === 0) d += `M${P(pt(a0, 1))}`;
+    d += `Q${P(pt((a0 + a1) / 2, 1 + amp * R(1.7, 2.4)))} ${P(pt(a1, 1))}`;
   }
   return d + 'Z';
 }
+function bong(cx, cy, rx, ry, n, amp) {
+  // một khối bông: quầng mờ phía sau cho cảm giác lông tơ + hình chính viền nhạt
+  return `<ellipse cx="${f(cx)}" cy="${f(cy)}" rx="${f(rx + 3)}" ry="${f(ry + 3)}" fill="#FFFBF3" opacity=".9" filter="url(#mem)"/>`
+    + `<path class="nt" d="${xu(cx, cy, rx, ry, n, amp)}" fill="${THO.kem}"/>`;
+}
 function longTo(cx, cy, rx, ry, n) {
-  // các nét lông tơ bên trong: nét cong ngắn và chỏm chữ V
+  // vài nét lông tơ cong nhẹ, màu rất nhạt
   let d = '';
   for (let i = 0; i < n; i++) {
-    const a = R(0, 6.2832), k = Math.sqrt(rnd()) * 0.82;
+    const a = R(0, 6.2832), k = Math.sqrt(rnd()) * 0.75;
     const x = cx + Math.cos(a) * rx * k, y = cy + Math.sin(a) * ry * k;
-    d += i % 3 === 0
-      ? `M${f(x - 3)},${f(y)}q1,5 3,7q1,-4 4,-6`
-      : `M${f(x)},${f(y)}q${f(R(-2, 2))},${f(R(2, 4))} ${f(R(-3, 3))},${f(R(5, 9))}`;
+    d += `M${f(x - 3)},${f(y)}q3,3 6,0`;
   }
-  return `<path d="${d}" fill="none" stroke="#D6C8B2" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return `<path d="${d}" fill="none" stroke="#E7DBC9" stroke-width="1.1" stroke-linecap="round"/>`;
 }
 function taiTho(ben, chu) {
   // ben = 1: tai bên phải tranh, -1: tai bên trái tranh. Tai xoè nhẹ ra ngoài, chữ thêu chạy dọc tai.
-  return `<g transform="translate(${THO.x + ben * 28},227) rotate(${-ben * 14})">`
-    + `<path class="nt" d="${xu(0, 44, 16, 50, 24, 0.11)}" fill="${THO.kem}"/>`
+  return `<g transform="translate(${THO.x + ben * 30},227) rotate(${-ben * 14})">`
+    + bong(0, 44, 15, 50, 18, 0.06)
     + `<ellipse cx="0" cy="46" rx="10.5" ry="40" fill="${THO.loTai}"/>`
-    + `<ellipse cx="0" cy="46" rx="10.5" ry="40" fill="none" stroke="#DDCDB6" stroke-width=".8" stroke-dasharray="2 2.4"/>`
+    + `<ellipse cx="0" cy="46" rx="10.5" ry="40" fill="none" stroke="#E4D6C1" stroke-width=".8" stroke-dasharray="2 2.4"/>`
     + `<text class="theu" transform="translate(0,46) rotate(90)" text-anchor="middle" dy=".33em" font-size="15.5">${chu}</text>`
     + '</g>';
 }
 function thoSau() {
   const cx = THO.x;
   let s = `<g id="tho" transform="${THO.to}">`;
-  // thân
-  s += `<path class="nt" d="${xu(cx - 2, 322, 31, 42, 26)}" fill="${THO.kem}"/>`;
-  s += `<path d="${blob(cx + 8, 340, 18, 18, 9, 0.1)}" fill="${THO.bong}" opacity=".5"/>`;
-  s += longTo(cx - 2, 334, 25, 26, 20);
-  // hai chân thõng xuống dưới cánh tay
-  s += `<path class="nt" d="${xu(cx - 22, 366, 14, 11, 13, 0.16)}" fill="${THO.kem}"/>`;
-  s += `<path class="nt" d="${xu(cx + 8, 368, 14, 11, 13, 0.16)}" fill="${THO.kem}"/>`;
+  // thân tròn
+  s += bong(cx - 1, 322, 28, 40, 18, 0.06);
+  s += `<path d="${blob(cx + 6, 342, 15, 15, 9, 0.08)}" fill="${THO.bong}" opacity=".4"/>`;
+  s += longTo(cx - 1, 338, 20, 18, 5);
+  // hai chân tròn thõng xuống dưới cánh tay
+  s += bong(cx - 20, 366, 13, 10.5, 9, 0.07);
+  s += bong(cx + 9, 368, 13, 10.5, 9, 0.07);
   // yếm đeo cổ: nền trắng, viền chỉ nâu vàng, đường may chấm, một trái tim nhỏ
   s += `<path d="M${cx - 15},274 C${cx - 20},288 ${cx - 16},304 ${cx},306 C${cx + 16},304 ${cx + 20},288 ${cx + 15},274 Q${cx},282 ${cx - 15},274Z" fill="#FFFFFF" stroke="${THO.chiTheu}" stroke-width="1.3" stroke-linejoin="round"/>`;
   s += `<path d="M${cx - 11},281 C${cx - 14},290 ${cx - 11},300 ${cx},301.5 C${cx + 11},300 ${cx + 14},290 ${cx + 11},281" fill="none" stroke="#D2A866" stroke-width=".9" stroke-dasharray="2 2"/>`;
   s += `<path d="M${cx},291.5 C${cx - 1.5},288 ${cx - 7},289 ${cx - 6},293 C${cx - 5.3},296 ${cx - 2},297.5 ${cx},299.5 C${cx + 2},297.5 ${cx + 5.3},296 ${cx + 6},293 C${cx + 7},289 ${cx + 1.5},288 ${cx},291.5Z" fill="${THO.chiTheu}"/>`;
-  // đầu, hai bên má và chỏm đầu xù thêm
-  s += `<path class="nt" d="${xu(cx - 27, 262, 10, 10, 9, 0.2)}" fill="${THO.kem}"/>`;
-  s += `<path class="nt" d="${xu(cx + 27, 262, 10, 10, 9, 0.2)}" fill="${THO.kem}"/>`;
-  s += `<path class="nt" d="${xu(cx, 250, 32, 29, 24)}" fill="${THO.kem}"/>`;
-  s += `<path d="${blob(cx - 26, 261, 9, 8, 8, 0.1)}" fill="${THO.kem}"/><path d="${blob(cx + 26, 261, 9, 8, 8, 0.1)}" fill="${THO.kem}"/>`;
-  s += `<path d="${blob(cx + 10, 262, 16, 12, 9, 0.1)}" fill="${THO.bong}" opacity=".4"/>`;
-  s += `<path d="${blob(cx, 261, 14, 10, 9, 0.08)}" fill="${THO.sang}"/>`;
-  s += longTo(cx, 240, 26, 15, 16);
-  s += `<path d="M${cx - 6},222 q3,-7 7,-1 q3,-6 6,1" fill="${THO.kem}" stroke="${THO.vien}" stroke-width="1.3" stroke-linejoin="round"/>`;
-  // mắt hạt đen, mũi hồng, miệng chỉ thêu
-  s += `<circle cx="${cx - 12}" cy="250" r="3" fill="#2B2730"/><circle cx="${cx + 12}" cy="250" r="3" fill="#2B2730"/>`;
-  s += `<circle cx="${cx - 13}" cy="249" r="1" fill="#FFFFFF"/><circle cx="${cx + 11}" cy="249" r="1" fill="#FFFFFF"/>`;
-  s += `<path d="M${cx - 4},256 Q${cx},254 ${cx + 4},256 Q${cx + 3},261 ${cx},262 Q${cx - 3},261 ${cx - 4},256Z" fill="${THO.mui}" stroke="#B8757B" stroke-width=".8"/>`;
-  s += `<path d="M${cx},262 v3 M${cx},265 q-3,3 -6,1 M${cx},265 q3,3 6,1" fill="none" stroke="${THO.vien}" stroke-width="1.1" stroke-linecap="round"/>`;
+  // đầu bầu, to hơn thân một chút cho đáng yêu
+  s += bong(cx, 250, 34, 29, 20, 0.055);
+  s += `<path d="${blob(cx, 262, 15, 10, 9, 0.06)}" fill="${THO.sang}"/>`;
+  s += longTo(cx, 233, 16, 6, 3);
+  // má hồng
+  s += `<ellipse cx="${cx - 20}" cy="259" rx="6.5" ry="4.2" fill="${THO.ma}" opacity=".5"/><ellipse cx="${cx + 20}" cy="259" rx="6.5" ry="4.2" fill="${THO.ma}" opacity=".5"/>`;
+  // mắt hạt đen tròn có đốm sáng, mũi hồng nhỏ, miệng cười chữ w
+  s += `<circle cx="${cx - 13}" cy="251" r="3.5" fill="#3A3238"/><circle cx="${cx + 13}" cy="251" r="3.5" fill="#3A3238"/>`;
+  s += `<circle cx="${cx - 14.2}" cy="249.8" r="1.3" fill="#FFFFFF"/><circle cx="${cx + 11.8}" cy="249.8" r="1.3" fill="#FFFFFF"/>`;
+  s += `<path d="M${cx - 3.6},257 Q${cx},255.4 ${cx + 3.6},257 Q${cx + 2.6},261 ${cx},261.6 Q${cx - 2.6},261 ${cx - 3.6},257Z" fill="${THO.mui}"/>`;
+  s += `<path d="M${cx},261.6 v2 M${cx},263.6 q-2.6,3.2 -5.6,1 M${cx},263.6 q2.6,3.2 5.6,1" fill="none" stroke="#A8968A" stroke-width="1.1" stroke-linecap="round"/>`;
   return s + '</g>';
 }
 function thoTruoc() {
@@ -561,9 +560,9 @@ function thoTruoc() {
   let s = `<g id="tho-truoc" transform="${THO.to}">`;
   // hai tai thêu chữ, vắt ra ngoài: tai trái tựa lên bắp tay, tai phải phủ lên mép giấy gói
   s += taiTho(-1, THO.chuTrai) + taiTho(1, THO.chuPhai);
-  // hai tay thỏ vắt lên cẳng tay
-  s += `<path class="nt" d="${xu(cx - 22, 305, 10, 12, 11, 0.17)}" fill="${THO.kem}"/>`;
-  s += `<path class="nt" d="${xu(cx + 15, 311, 10, 12, 11, 0.17)}" fill="${THO.kem}"/>`;
+  // hai tay thỏ tròn vắt lên cẳng tay
+  s += bong(cx - 21, 305, 9.5, 11, 8, 0.07);
+  s += bong(cx + 15, 311, 9.5, 11, 8, 0.07);
   return s + '</g>';
 }
 
@@ -861,6 +860,7 @@ function defs() {
     <clipPath id="cat-ho"><rect x="-12" y="${HO_Y}" width="${W + 24}" height="170"/></clipPath>
     <clipPath id="mep"><path d="${mepTranh()}"/></clipPath>
     <filter id="mo" x="-30%" y="-120%" width="160%" height="340%"><feGaussianBlur stdDeviation="14"/></filter>
+    <filter id="mem" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="2.2"/></filter>
     <filter id="rung" x="-3%" y="-3%" width="106%" height="106%" color-interpolation-filters="sRGB">
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="7" result="nhieu"/>
       <feDisplacementMap in="SourceGraphic" in2="nhieu" scale="4.5" xChannelSelector="R" yChannelSelector="G"/>
@@ -946,7 +946,7 @@ h1{font-family:var(--chu-de);font-weight:500;font-style:italic;font-size:clamp(1
 .nx{stroke:${INK};stroke-width:1.1;stroke-linejoin:round;stroke-opacity:.75}
 .nk{fill:none;stroke:#A39A82;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
 .nf{stroke:#5B7BA6;stroke-width:1.3;stroke-linejoin:round;stroke-linecap:round}
-.nt{stroke:#94877B;stroke-width:1.4;stroke-linejoin:round;stroke-linecap:round}
+.nt{stroke:#B3A38F;stroke-width:1.25;stroke-linejoin:round;stroke-linecap:round}
 .theu{font-family:'Charm','Lucida Calligraphy','Apple Chancery',cursive;font-weight:700;fill:#B5823A;stroke:#8E6527;stroke-width:.4;paint-order:stroke}
 .ll{fill:#FFFFFF;stroke:#9CC4E4;stroke-width:.8;animation:chop 3.4s ease-in-out infinite}
 @keyframes chop{0%,100%{opacity:.95}50%{opacity:.25}}
