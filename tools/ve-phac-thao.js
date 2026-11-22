@@ -391,27 +391,28 @@ function boHoa() {
   s += `<path d="${blob(...bp(30, -4), 80, 62, 12, 0.1, gocV)}" fill="#B7D5EF" opacity=".85"/>`;
   // lá đệm thò ra quanh mép
   for (const [a, b, len, lech] of [[104, -44, 30, 0], [114, 34, 28, 10], [124, -6, 26, -8], [44, -100, 30, 12], [70, 88, 28, -10], [18, 110, 30, 0], [-24, -86, 28, 20], [-40, 84, 28, -10], [88, 70, 24, 14]]) {
-    s += la(...bp(a - 14, b * 0.86), len, huong(a - 20, b) + lech, pick(['#8FB79A', '#7FAA8C', '#9CC2A4']));
+    s += lac(la(...bp(a - 14, b * 0.86), len, huong(a - 20, b) + lech, pick(['#8FB79A', '#7FAA8C', '#9CC2A4'])), ...bp(a - 44, b * 0.5), 4, 0.35 + R2(0, 0.7));
   }
 
-  // --- hoa, vẽ từ sau ra trước
-  s += hongMon(...bp(88, -30), 36, goc - 12);
-  for (const [a, b, r] of [[50, 104, goc + 66], [60, 96, goc + 48], [74, 88, goc + 30]]) s += tulip(...bp(a, b), 17, r);
-  s += lily(...bp(64, -82), 30, goc - 60, 'trang');
-  s += cumSao(...bp(102, 62), 7, 19);
-  s += rose(...bp(100, 20), 18, 10);
-  s += lily(...bp(6, 96), 30, goc + 70, 'trang');
-  s += cumSao(...bp(30, 108), 5, 13);
-  s += rose(...bp(14, -80), 20, -20);
-  s += rose(...bp(56, 52), 20, 40);
-  s += lily(...bp(44, -14), 52, goc + 8);
-  s += hongMon(...bp(-20, -84), 30, goc - 112);
-  s += cumSao(...bp(-10, -50), 7, 17);
-  s += lily(...bp(-12, 30), 50, goc + 50);
-  s += rose(...bp(-38, 66), 18, 70);
-  s += rose(...bp(-46, -16), 23, 0);
-  s += cumSao(...bp(-54, 28), 4, 10);
-  s += cumSao(...bp(78, -66), 4, 11);
+  // --- hoa, vẽ từ sau ra trước. lay(): mỗi bông ngả nhẹ theo gió quanh một điểm lùi về phía cuống
+  const lay = (hinh, a, b, bien) => lac(hinh, ...bp(a - 46, b * 0.55), bien, 0.35 + R2(0, 0.7));
+  s += lay(hongMon(...bp(88, -30), 36, goc - 12), 88, -30, 3.6);
+  for (const [a, b, r] of [[50, 104, goc + 66], [60, 96, goc + 48], [74, 88, goc + 30]]) s += lay(tulip(...bp(a, b), 17, r), a, b, 4.5);
+  s += lay(lily(...bp(64, -82), 30, goc - 60, 'trang'), 64, -82, 2.2);
+  s += lay(cumSao(...bp(102, 62), 7, 19), 102, 62, 5.5);
+  s += lay(rose(...bp(100, 20), 18, 10), 100, 20, 2.4);
+  s += lay(lily(...bp(6, 96), 30, goc + 70, 'trang'), 6, 96, 2.2);
+  s += lay(cumSao(...bp(30, 108), 5, 13), 30, 108, 5.5);
+  s += lay(rose(...bp(14, -80), 20, -20), 14, -80, 2.4);
+  s += lay(rose(...bp(56, 52), 20, 40), 56, 52, 2.4);
+  s += lay(lily(...bp(44, -14), 52, goc + 8), 44, -14, 2.2);
+  s += lay(hongMon(...bp(-20, -84), 30, goc - 112), -20, -84, 3.6);
+  s += lay(cumSao(...bp(-10, -50), 7, 17), -10, -50, 5.5);
+  s += lay(lily(...bp(-12, 30), 50, goc + 50), -12, 30, 2.2);
+  s += lay(rose(...bp(-38, 66), 18, 70), -38, 66, 2.4);
+  s += lay(rose(...bp(-46, -16), 23, 0), -46, -16, 2.4);
+  s += lay(cumSao(...bp(-54, 28), 4, 10), -54, 28, 5.5);
+  s += lay(cumSao(...bp(78, -66), 4, 11), 78, -66, 5.5);
   // hạt đá đính trên cánh
   for (const [a, b] of [[62, 4], [30, -36], [10, 46], [-30, 12], [72, -30], [-2, -66], [42, 72], [-44, 52], [90, 30], [22, 8], [-40, -30], [60, -56]]) {
     s += hatDa(...bp(a, b), R(1.8, 2.6));
@@ -485,7 +486,7 @@ function vayLua() {
   // vạt đắp chéo
   s += `<path fill="${sh}" opacity=".5" d="M-88,452 C-38,446 32,420 85,386 L86,400 C34,432 -36,458 -89,466Z"/>`;
   s += `<path class="nm" d="M-88,452 C-38,446 32,420 85,386"/>`;
-  s += vienRen(478, 20);
+  s += `<g class="vay-gio">${vienRen(478, 20)}</g>`;
   return s + '</g>';
 }
 
@@ -532,7 +533,7 @@ function longTo(cx, cy, rx, ry, n) {
 }
 function taiTho(ben, chu) {
   // ben = 1: tai bên phải tranh, -1: tai bên trái tranh. Tai xoè nhẹ ra ngoài, chữ thêu chạy dọc tai.
-  return lacMo(THO.x + ben * 30, 227, 5, ben > 0 ? 0.5 : 1) + `<g transform="translate(${THO.x + ben * 30},227) rotate(${-ben * 14})">`
+  return lacMo(THO.x + ben * 30, 227, -7, ben > 0 ? 0.45 : 0.25) + `<g transform="translate(${THO.x + ben * 30},227) rotate(${-ben * 14})">`
     + bong(0, 44, 15, 50, 18, 0.06)
     + `<ellipse cx="0" cy="46" rx="10.5" ry="40" fill="${THO.loTai}"/>`
     + `<ellipse cx="0" cy="46" rx="10.5" ry="40" fill="none" stroke="#E4D6C1" stroke-width=".8" stroke-dasharray="2 2.4"/>`
@@ -547,8 +548,8 @@ function thoSau() {
   s += `<path d="${blob(cx + 6, 342, 15, 15, 9, 0.08)}" fill="${THO.bong}" opacity=".4"/>`;
   s += longTo(cx - 1, 338, 20, 18, 5);
   // hai chân tròn thõng xuống dưới cánh tay
-  s += lac(bong(cx - 20, 366, 13, 10.5, 9, 0.07), cx - 20, 354, 7, 0.2);
-  s += lac(bong(cx + 9, 368, 13, 10.5, 9, 0.07), cx + 9, 356, 7, 0.8);
+  s += lac(bong(cx - 20, 366, 13, 10.5, 9, 0.07), cx - 20, 354, -5, 0.3);
+  s += lac(bong(cx + 9, 368, 13, 10.5, 9, 0.07), cx + 9, 356, -5, 0.4);
   // yếm đeo cổ: nền trắng, viền chỉ nâu vàng, đường may chấm, một trái tim nhỏ
   s += `<path d="M${cx - 15},274 C${cx - 20},288 ${cx - 16},304 ${cx},306 C${cx + 16},304 ${cx + 20},288 ${cx + 15},274 Q${cx},282 ${cx - 15},274Z" fill="#FFFFFF" stroke="${THO.chiTheu}" stroke-width="1.3" stroke-linejoin="round"/>`;
   s += `<path d="M${cx - 11},281 C${cx - 14},290 ${cx - 11},300 ${cx},301.5 C${cx + 11},300 ${cx + 14},290 ${cx + 11},281" fill="none" stroke="#D2A866" stroke-width=".9" stroke-dasharray="2 2"/>`;
@@ -614,16 +615,16 @@ function coGai() {
       + `<path d="${d}" fill="none" stroke="#9FD8EC" stroke-width="${w}" stroke-linecap="butt"/>`
       + `<path d="${d}" fill="none" stroke="#D5F0F8" stroke-width="${f(w * 0.25)}" stroke-linecap="butt" opacity=".9"/>`;
   };
-  s += lac(ruy([[-18, 372], [-26, 410], [-16, 450], [-28, 496]], 9), -18, 372, 4, 0.9);
-  s += lac(ruy([[-4, 370], [4, 422], [-4, 472], [10, 528]], 10), -4, 370, 3.5, 1.3);
-  s += lac(ruy([[-10, 372], [-10, 402], [0, 442], [-10, 478]], 8), -10, 372, 4.5, 0.6);
+  s += lac(ruy([[-18, 372], [-26, 410], [-16, 450], [-28, 496]], 9), -18, 372, -7, 0.45);
+  s += lac(ruy([[-4, 370], [4, 422], [-4, 472], [10, 528]], 10), -4, 370, -6, 0.6);
+  s += lac(ruy([[-10, 372], [-10, 402], [0, 442], [-10, 478]], 8), -10, 372, -8, 0.5);
 
   // --- đầu (nghiêng nhẹ về phía bó hoa)
-  s += lacMo(0, 118, 1.4, 0.5) + '<g transform="rotate(4 0 118)">';
+  s += '<g transform="rotate(4 0 118)">';
   // búi tóc
   s += `<path class="n" fill="${toc}" d="${blob(8, -38, 31, 27, 11, 0.07)}"/>`;
   s += `<path d="M-12,-44 C-2,-62 24,-62 32,-42 M-6,-30 C6,-48 26,-46 30,-28 M2,-56 C10,-50 16,-42 16,-30" fill="none" stroke="${tocDam}" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>`;
-  s += `<path d="M-14,-52 C-22,-58 -28,-56 -32,-50 M30,-56 C38,-62 44,-58 46,-52 M12,-66 C12,-72 16,-76 20,-76" fill="none" stroke="${toc}" stroke-width="2" stroke-linecap="round"/>`;
+  s += lac(`<path d="M-14,-52 C-22,-58 -28,-56 -32,-50 M30,-56 C38,-62 44,-58 46,-52 M12,-66 C12,-72 16,-76 20,-76" fill="none" stroke="${toc}" stroke-width="2" stroke-linecap="round"/>`, 8, -40, 7, 0.1, 2);
   // tai
   s += `<path class="n" fill="${da}" d="M-41,56 C-50,52 -52,66 -47,76 C-45,80 -42,80 -40,76Z"/>`;
   s += `<path class="n" fill="${da}" d="M41,56 C50,52 52,66 47,76 C45,80 42,80 40,76Z"/>`;
@@ -638,6 +639,7 @@ function coGai() {
     + ` C45,50 42,41 37,32 C28,23 14,19 2,21 C-12,19 -27,23 -37,32 C-42,41 -45,50 -46,62 Z"/>`;
   s += `<path class="n" fill="none" d="M-46,62 C-55,30 -51,-6 -22,-18 C-8,-23 12,-23 24,-17 C51,-5 55,30 46,62"/>`;
   // mái thưa: một lớp tóc mỏng nhìn xuyên thấy trán, thêm vài sợi rõ nét rẽ nhẹ sang hai bên
+  s += lacMo(2, 2, -3, 0.15, 2);
   s += `<path fill="${toc}" opacity=".5" d="M37,32 C39,38 38,43 35,46 C30,50 24,51 18,49 C13,51 8,50 5,46 C3,43 1,43 -1,46`
     + ` C-5,50 -11,51 -17,49 C-23,51 -29,50 -34,46 C-38,43 -39,38 -37,32 C-27,23 -12,19 2,21 C14,19 28,23 37,32Z"/>`;
   const mai = [
@@ -647,19 +649,21 @@ function coGai() {
   for (const [x0, y0, cx, cy, x1, y1, w] of mai) {
     s += `<path d="M${x0},${y0} Q${cx},${cy} ${x1},${y1}" fill="none" stroke="${toc}" stroke-width="${w}" stroke-linecap="round"/>`;
   }
-  // lọn tóc mai hai bên
-  s += `<path d="M-41,36 C-49,50 -50,66 -46,80 C-45,84 -46,88 -48,90 M-44,44 C-48,56 -48,66 -47,74" fill="none" stroke="${toc}" stroke-width="2.4" stroke-linecap="round"/>`;
-  s += `<path d="M41,36 C49,50 50,66 46,80 C45,84 46,88 48,90 M44,44 C48,56 48,66 47,74" fill="none" stroke="${toc}" stroke-width="2.4" stroke-linecap="round"/>`;
+  s += '</g>';
+  // lọn tóc mai hai bên bay theo gió
+  s += lac(`<path d="M-41,36 C-49,50 -50,66 -46,80 C-45,84 -46,88 -48,90 M-44,44 C-48,56 -48,66 -47,74" fill="none" stroke="${toc}" stroke-width="2.4" stroke-linecap="round"/>`, -41, 36, -9, 0.2);
+  s += lac(`<path d="M41,36 C49,50 50,66 46,80 C45,84 46,88 48,90 M44,44 C48,56 48,66 47,74" fill="none" stroke="${toc}" stroke-width="2.4" stroke-linecap="round"/>`, 41, 36, -11, 0.4);
+  s += lac(`<path d="M44,56 C54,61 60,72 71,75 M45,64 C52,73 58,84 67,91" fill="none" stroke="${toc}" stroke-width="1.8" stroke-linecap="round"/>`, 44, 58, -10, 0.55, 2);
   // nếp tóc chải lên búi
   s += `<path d="M-32,22 C-26,0 -8,-14 4,-17 M32,22 C28,2 16,-12 8,-17 M-2,26 C-2,6 2,-8 6,-17 M-42,34 C-40,8 -22,-10 -8,-16 M42,34 C42,10 30,-8 18,-15" fill="none" stroke="${tocDam}" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>`;
   s += `<path d="M-22,14 C-16,0 -6,-8 2,-11 M20,10 C18,2 14,-4 10,-8" fill="none" stroke="${tocSang}" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>`;
   // hoa tai ngọc trai
   s += `<circle cx="-45" cy="82" r="3.4" fill="#FFFFFF" stroke="${INK}" stroke-width="1.2"/>`;
   s += `<circle cx="45" cy="82" r="3.4" fill="#FFFFFF" stroke="${INK}" stroke-width="1.2"/>`;
-  s += '</g></g>';
+  s += '</g>';
 
-  // --- bó hoa (rung rinh nhẹ quanh chỗ tay nắm)
-  s += lac(boHoa(), BO.T[0], BO.T[1], 1.2, 0.3);
+  // --- bó hoa (bó đứng yên, từng bông lay theo gió)
+  s += boHoa();
 
   // --- bàn tay bên phải tranh nắm cổ bó hoa
   s += `<path class="n" fill="${da}" d="M16,343 C4,337 -14,337 -25,343 C-34,349 -33,365 -24,371 C-10,377 4,377 16,374 Z"/>`;
@@ -761,10 +765,10 @@ function canh() {
   s += doi(dongCo, H + 12, 'url(#co)', 'stroke="#2B2433" stroke-width="1.6" stroke-opacity=".5"');
   s += `<ellipse cx="300" cy="960" rx="340" ry="80" fill="#FFB25A" opacity=".3" filter="url(#mo)"/>`;
   // thông gần hai bên
-  s += lac(thongLon(158, dongCo(158) + 10, 400, 10), 158, dongCo(158) + 10, 0.6, 0.6);
-  s += lac(thongLon(752, dongCo(752) + 6, 236, -4), 752, dongCo(752) + 6, 0.7, 1.4);
-  s += lac(thongLon(832, dongCo(832) + 12, 318, 6), 832, dongCo(832) + 12, 0.6, 2.3);
-  s += lac(thongLon(890, dongCo(890) + 18, 392, -8), 890, dongCo(890) + 18, 0.5, 3.1);
+  s += lac(thongLon(158, dongCo(158) + 10, 400, 10), 158, dongCo(158) + 10, 0.9, 0.25);
+  s += lac(thongLon(752, dongCo(752) + 6, 236, -4), 752, dongCo(752) + 6, 1, 1.25);
+  s += lac(thongLon(832, dongCo(832) + 12, 318, 6), 832, dongCo(832) + 12, 0.9, 1.4);
+  s += lac(thongLon(890, dongCo(890) + 18, 392, -8), 890, dongCo(890) + 18, 0.8, 1.5);
   // dải cỏ hồng tháng mười một ở mép đồng cỏ, bắt nắng chiều
   let coHong = '';
   for (let i = 0; i < 150; i++) {
@@ -775,12 +779,13 @@ function canh() {
   // bóng cây đổ dài về bên phải
   s += `<g fill="#1B2626" opacity=".32" filter="url(#mo)"><ellipse cx="290" cy="894" rx="170" ry="11"/><ellipse cx="860" cy="902" rx="120" ry="12"/></g>`;
   // cỏ + hoa dại
-  let co = '', hoaDai = '';
+  let hoaDai = '';
+  const coBang = Array.from({ length: 7 }, () => '');
   for (let i = 0; i < 150; i++) {
     const x = R(0, W), y = R(dongCo(x) + 14, 1190), k = 0.6 + (y - 880) / 420;
-    co += `M${f(x)},${f(y)}l${f(-3 * k)},${f(-9 * k)}M${f(x + 3 * k)},${f(y)}l${f(1 * k)},${f(-11 * k)}M${f(x + 6 * k)},${f(y)}l${f(4 * k)},${f(-8 * k)}`;
+    coBang[Math.min(6, Math.max(0, Math.floor((y - 860) / 48)))] += `M${f(x)},${f(y)}l${f(-3 * k)},${f(-9 * k)}M${f(x + 3 * k)},${f(y)}l${f(1 * k)},${f(-11 * k)}M${f(x + 6 * k)},${f(y)}l${f(4 * k)},${f(-8 * k)}`;
   }
-  s += `<path d="${co}" fill="none" stroke="#2F4A40" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>`;
+  coBang.forEach((d, i) => { if (d) s += `<path class="gio" style="--d:${f(-i * 0.12)}s" d="${d}" fill="none" stroke="#2F4A40" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>`; });
   for (let i = 0; i < 46; i++) {
     const x = R(0, W), y = R(dongCo(x) + 20, 1150), k = 0.7 + (y - 880) / 500;
     hoaDai += `<circle cx="${f(x)}" cy="${f(y)}" r="${f(2.4 * k)}" fill="${pick(['#FFF1D0', '#FFE3A0', '#FFD98A', '#F9B8C4'])}"/>`;
@@ -792,7 +797,7 @@ function canh() {
   s += `<path d="${blob(790, 990, 60, 40, 10, 0.2)}" fill="#6B8A52" opacity=".8"/>`;
   for (let i = 0; i < 14; i++) s += la(R(730, 890), R(960, 1060), R(22, 34), R(-160, -20), pick(['#3F5F45', '#4F7350']));
   for (const [x, y, k] of [[742, 962, 1], [786, 940, 1.15], [836, 950, 1.05], [880, 972, 1.2], [760, 1004, 1.2], [812, 992, 1.3], [862, 1020, 1.25], [724, 1030, 1.05], [796, 1044, 1.35], [846, 1068, 1.2], [896, 1046, 1.1]]) {
-    s += lac(daQuy(x, y, k, R(0, 30)), x, y + 18, 5, R2(0, 4));
+    s += lac(daQuy(x, y, k, R(0, 30)), x, y + 18, 7, x / W * 1.5 + R2(0, 0.4));
   }
 
   // bóng cô gái đổ dài về bên phải (nắng xiên từ bên trái)
@@ -807,11 +812,11 @@ function canh() {
     const x = pick([R(-10, 330), R(560, W + 10)]);
     s += la(x, R(1100, 1160), R(30, 44), R(-170, -10), pick(['#3E6A55', '#4A7860', '#35604C']));
   }
-  for (const [x, y, r, p] of sau) s += lac(tuCau(x, y, r, TU_CAU[p]), x, y + r, 2.2, R2(0, 4));
+  for (const [x, y, r, p] of sau) s += lac(tuCau(x, y, r, TU_CAU[p]), x, y + r, 3.2, x / W * 1.5 + R2(0, 0.4));
 
   // cô gái
-  // cả người đung đưa nhẹ quanh bàn chân
-  s += lac(`<g id="co-gai" transform="translate(${GAI.x},${GAI.y}) scale(${GAI.s})">${coGai()}</g>`, GAI.x, GAI.y + 736 * GAI.s, 1.1, 0);
+  // cô gái đứng yên; chỉ tóc, hoa, tai thỏ, ruy băng và gấu váy động theo gió
+  s += `<g id="co-gai" transform="translate(${GAI.x},${GAI.y}) scale(${GAI.s})">${coGai()}</g>`;
 
   // cẩm tú cầu tiền cảnh (che bàn chân)
   const cum = [
@@ -827,8 +832,14 @@ function canh() {
     laTC += la(R(-10, W + 10), R(1170, 1290), R(34, 52), R(-170, -10), pick(['#3E6A55', '#4A7860', '#35604C']));
   }
   s += laTC;
-  for (const [x, y, r, p] of cum) s += lac(tuCau(x, y, r, TU_CAU[p]), x, y + r, 2.2, R2(0, 4));
+  for (const [x, y, r, p] of cum) s += lac(tuCau(x, y, r, TU_CAU[p]), x, y + r, 3.2, x / W * 1.5 + R2(0, 0.4));
 
+  // cánh hoa bị gió cuốn bay ngang tranh (chỉ hiện khi tranh động)
+  for (let i = 0; i < 10; i++) {
+    const mau = ['#FFFFFF', '#CFE6F8', '#F9C9D8', '#FFE9B0'][Math.floor(R2(0, 4))];
+    s += `<g transform="translate(${f(R2(70, 720))},${f(R2(430, 1090))})"><g class="bay" style="--d:${f(-R2(0, 4))}s;--dx:${f(R2(170, 300))}px;--dy:${f(R2(-60, 40))}px">`
+      + `<path class="xoay" d="M0,0 C3,-4.5 10,-4.5 13,0 C10,4.5 3,4.5 0,0Z" fill="${mau}" stroke="${INK}" stroke-width=".6" stroke-opacity=".5"/></g></g>`;
+  }
   // gốc thông to sát mép trái in bóng sẫm, mép phải bắt một viền nắng; cành rủ phía trên
   s += `<path class="n" fill="#2E2230" d="M10,1300 C26,900 42,500 50,-20 L98,-20 C92,500 98,900 116,1300 Z"/>`;
   s += `<path fill="#C76A35" opacity=".7" d="M89,-20 L98,-20 C92,500 98,900 116,1300 L105,1300 C89,900 83,500 89,-20Z"/>`;
@@ -838,12 +849,12 @@ function canh() {
     vo += `M${f(x)},${f(y)}q${f(R(-4, 4))},${f(R(14, 26))} ${f(R(-3, 3))},${f(R(30, 52))}`;
   }
   s += `<path d="${vo}" fill="none" stroke="#1A1220" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>`;
-  s += lac(canhThong([[86, 236], [150, 214], [226, 206], [300, 176], [352, 168]], 7, 6) + canhThong([[170, 212], [200, 250], [236, 268]], 4, 3), 86, 236, 1.5, 0.4);
-  s += lac(canhThong([[84, 92], [150, 70], [230, 76], [300, 48], [380, 52]], 6, 6), 84, 92, 1.3, 1.5);
-  s += lac(canhThong([[W + 10, 34], [840, 60], [770, 62], [706, 96], [660, 98]], 6, 5), W + 10, 34, 1.4, 2.4);
-  s += lac(canhThong([[W + 10, 150], [860, 158], [820, 190]], 4, 3), W + 10, 150, 1.8, 3.2);
+  s += lac(canhThong([[86, 236], [150, 214], [226, 206], [300, 176], [352, 168]], 7, 6) + canhThong([[170, 212], [200, 250], [236, 268]], 4, 3), 86, 236, 2.2, 0.1);
+  s += lac(canhThong([[84, 92], [150, 70], [230, 76], [300, 48], [380, 52]], 6, 6), 84, 92, 2, 0.2);
+  s += lac(canhThong([[W + 10, 34], [840, 60], [770, 62], [706, 96], [660, 98]], 6, 5), W + 10, 34, -2, 1.5);
+  s += lac(canhThong([[W + 10, 150], [860, 158], [820, 190]], 4, 3), W + 10, 150, -2.6, 1.6);
   // tú cầu che gốc thông
-  s += lac(tuCau(30, 1200, 44, TU_CAU.trang), 30, 1244, 2.2, 1.1) + lac(tuCau(104, 1232, 40, TU_CAU.tim), 104, 1272, 2.2, 2.6);
+  s += lac(tuCau(30, 1200, 44, TU_CAU.trang), 30, 1244, 3.2, 0.05) + lac(tuCau(104, 1232, 40, TU_CAU.tim), 104, 1272, 3.2, 0.2);
   return s;
 }
 
@@ -980,16 +991,23 @@ h1{font-family:var(--chu-de);font-weight:500;font-style:italic;font-size:clamp(1
 /* chuyển động đung đưa: chỉ chạy khi <svg class="tranh dong"> */
 .dong .lac{animation:lac var(--t,4s) ease-in-out var(--d,0s) infinite}
 .dong .troi{animation:troi 4s ease-in-out var(--d,0s) infinite}
-.dong .gio{transform-box:fill-box;transform-origin:50% 100%;animation:gio 4s ease-in-out infinite}
+.dong .gio{transform-box:fill-box;transform-origin:50% 100%;animation:gio 4s ease-in-out var(--d,0s) infinite}
+.dong .vay-gio{transform-box:fill-box;transform-origin:50% 0%;animation:vay 4s ease-in-out -.45s infinite}
+.bay{opacity:0}
+.dong .bay{animation:bay 4s linear var(--d,0s) infinite}
+.dong .xoay{transform-box:fill-box;transform-origin:center;animation:xoay 2s linear infinite}
 .dong .chim{animation:chim 2s ease-in-out infinite}
 .dong .long-lanh{animation:nhay 2s ease-in-out infinite}
-@keyframes lac{0%,100%{transform:rotate(calc(var(--a,2deg) * -1))}50%{transform:rotate(var(--a,2deg))}}
+@keyframes lac{0%,100%{transform:rotate(calc(var(--a,2deg) * -.2))}32%{transform:rotate(var(--a,2deg))}52%{transform:rotate(calc(var(--a,2deg) * .5))}70%{transform:rotate(calc(var(--a,2deg) * .85))}}
 @keyframes troi{0%,100%{transform:translateX(calc(var(--dx,6px) * -1))}50%{transform:translateX(var(--dx,6px))}}
-@keyframes gio{0%,100%{transform:skewX(-3deg)}50%{transform:skewX(3deg)}}
+@keyframes gio{0%,100%{transform:skewX(1deg)}32%{transform:skewX(-6deg)}52%{transform:skewX(-2.5deg)}70%{transform:skewX(-4.5deg)}}
+@keyframes vay{0%,100%{transform:skewX(-1deg)}32%{transform:skewX(6deg)}52%{transform:skewX(2.5deg)}70%{transform:skewX(4.5deg)}}
+@keyframes bay{0%{opacity:0;transform:translate(0,0)}12%{opacity:.95}80%{opacity:.9}100%{opacity:0;transform:translate(var(--dx,200px),var(--dy,0px))}}
+@keyframes xoay{to{transform:rotate(360deg)}}
 @keyframes chim{0%,100%{transform:translateY(-2px)}50%{transform:translateY(3px)}}
 @keyframes nhay{0%,100%{opacity:.95}50%{opacity:.5}}
 .ghi-chu{margin:0;color:var(--muc-nhat);font-size:.9rem;max-width:60ch}
-@media (prefers-reduced-motion: reduce){ .ll,.dong .lac,.dong .troi,.dong .gio,.dong .chim,.dong .long-lanh{animation:none} }
+@media (prefers-reduced-motion: reduce){ .ll,.dong .lac,.dong .troi,.dong .gio,.dong .vay-gio,.dong .bay,.dong .xoay,.dong .chim,.dong .long-lanh{animation:none} }
 `;
 
 const BODY = `

@@ -25,7 +25,11 @@ Chữ thêu trên hai tai thỏ và màu chỉ nằm ở hằng `THO` (`chuTrai`
 
 ## Chuyển động
 
-Phần nào muốn đung đưa thì bọc bằng `lac(hình, ox, oy, biênĐộ, lệchPha)`: nó lắc quanh điểm `(ox, oy)`. Chuyển động chỉ chạy khi thẻ `<svg>` có lớp `dong`, nên trang HTML mặc định đứng yên; `tools/lam-gif.js` tự bật lớp này khi chụp. Chu kỳ chỉ dùng 4 giây hoặc 2 giây để GIF lặp liền mạch.
+Người đứng yên, chỉ có gió thổi từ trái sang: tóc mai, mái và tóc con bay; từng bông hoa trong bó lay riêng; tai và chân thỏ, ruy băng, gấu váy phất; cành thông, cẩm tú cầu, dã quỳ, cỏ rạp theo từng đợt; mây trôi, vệt nắng trên hồ nhấp nháy, vài cánh hoa bay ngang.
+
+Phần nào muốn động thì bọc bằng `lac(hình, ox, oy, biênĐộ, lệchPha)`: nó ngả quanh điểm `(ox, oy)` theo nhịp gió (thổi mạnh rồi lơi dần). Vật mọc từ dưới lên dùng biên độ dương, vật rủ từ trên xuống (tai thỏ, ruy băng, tóc) dùng biên độ âm thì cùng tạt về bên phải. Lệch pha tăng dần theo toạ độ x để sóng gió chạy từ trái sang.
+
+Chuyển động chỉ chạy khi thẻ `<svg>` có lớp `dong`, nên trang HTML mặc định đứng yên; `tools/lam-gif.js` tự bật lớp này khi chụp. Chu kỳ chỉ dùng 4 giây hoặc 2 giây để GIF lặp liền mạch.
 
 ## Quy ước
 
