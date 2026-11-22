@@ -1,6 +1,6 @@
 # Thiệp sinh nhật Đà Lạt
 
-Thiệp sinh nhật vẽ tay bằng SVG: cô gái mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông Franilla, đứng giữa đồi thông Đà Lạt.
+Thiệp sinh nhật vẽ tay bằng SVG: cô gái mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông Franilla, đứng giữa đồi thông Đà Lạt lúc hoàng hôn.
 
 ## Hiện có
 

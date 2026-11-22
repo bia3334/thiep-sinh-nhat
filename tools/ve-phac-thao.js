@@ -14,6 +14,7 @@ const path = require('path');
 const W = 900, H = 1280;
 const INK = '#3B4560';
 const GAI = { x: 425, y: 350, s: 1.12 }; // vị trí + cỡ cô gái trong tranh
+const MT = { x: 250, y: 522 }; // mặt trời lặn, vừa chạm dãy núi bên trái
 
 /* ---------- số ngẫu nhiên có hạt giống (để lần nào vẽ cũng ra y hệt) ---------- */
 let seed = 20261122;
@@ -115,7 +116,7 @@ function rungThong(fn, x0, x1, n, la, la2, than) {
 
 function thongLon(x, y, h, lean = 0) {
   const topX = x + lean, topY = y - h, w = h * 0.028;
-  let s = `<path class="n" d="M${f(x - w)},${f(y)}L${f(topX - w * 0.25)},${f(topY + h * 0.1)}L${f(topX + w * 0.25)},${f(topY + h * 0.1)}L${f(x + w)},${f(y)}Z" fill="#6B5348"/>`;
+  let s = `<path class="n" d="M${f(x - w)},${f(y)}L${f(topX - w * 0.25)},${f(topY + h * 0.1)}L${f(topX + w * 0.25)},${f(topY + h * 0.1)}L${f(x + w)},${f(y)}Z" fill="#33252E"/>`;
   // vài vệt vỏ cây
   for (let i = 0; i < 5; i++) {
     const yy = y - h * R(0.05, 0.42);
@@ -127,13 +128,13 @@ function thongLon(x, y, h, lean = 0) {
     let p = '';
     for (let j = 0; j < 6; j++) {
       const q = (j / 5 - 0.5) * 2;
-      p += kim(cx + q * rx * 0.88, cy - ry * 0.5 * (1 - q * q * 0.7), h * 0.036, -90 + q * 38, 62, 9, '#2B5450');
+      p += kim(cx + q * rx * 0.88, cy - ry * 0.5 * (1 - q * q * 0.7), h * 0.036, -90 + q * 38, 62, 9, '#1D2530');
     }
     p += `<path class="n nh" d="${blob(cx, cy, rx, ry, 13, 0.16)}" fill="${fill}"/>`;
-    p += `<path d="${blob(cx - rx * 0.3, cy - ry * 0.28, rx * 0.5, ry * 0.36, 8, 0.2)}" fill="#5F958A" opacity=".65"/>`;
+    p += `<path d="${blob(cx - rx * 0.2, cy - ry * 0.5, rx * 0.4, ry * 0.16, 8, 0.2)}" fill="#E08A45" opacity=".5"/>`;
     for (let j = 0; j < 4; j++) {
       const q = (j / 3 - 0.5) * 2;
-      p += kim(cx + q * rx * 0.7, cy + ry * 0.7, h * 0.026, 90 + q * 30, 55, 6, '#2B5450');
+      p += kim(cx + q * rx * 0.7, cy + ry * 0.7, h * 0.026, 90 + q * 30, 55, 6, '#1D2530');
     }
     return p;
   };
@@ -145,19 +146,19 @@ function thongLon(x, y, h, lean = 0) {
     const side = i === 0 ? 0 : (i % 2 ? 1 : -1);
     const rx = h * (0.07 + t * 0.075) * R(0.9, 1.12), ry = h * 0.034 * R(0.92, 1.2);
     const cx = tx(k) + side * rx * 0.62, cy = topY + h * k;
-    canh += `<path d="M${f(tx(k + 0.06))},${f(cy + h * 0.06)} Q${f((tx(k) + cx) / 2)},${f(cy + ry * 1.4)} ${f(cx)},${f(cy)}" stroke="#6B5348" stroke-width="${f(h * 0.011)}" fill="none" stroke-linecap="round"/>`;
-    dem += tan(cx, cy, rx, ry, i % 2 ? '#3A6B64' : '#2F5C56');
+    canh += `<path d="M${f(tx(k + 0.06))},${f(cy + h * 0.06)} Q${f((tx(k) + cx) / 2)},${f(cy + ry * 1.4)} ${f(cx)},${f(cy)}" stroke="#33252E" stroke-width="${f(h * 0.011)}" fill="none" stroke-linecap="round"/>`;
+    dem += tan(cx, cy, rx, ry, i % 2 ? '#303A47' : '#28313E');
     if (i > 0) {
       const rx2 = rx * R(0.5, 0.68), cx2 = tx(k + 0.04) - side * rx2 * 0.95, cy2 = cy + h * 0.045;
-      canh += `<path d="M${f(tx(k + 0.09))},${f(cy2 + h * 0.05)} Q${f((tx(k) + cx2) / 2)},${f(cy2 + ry)} ${f(cx2)},${f(cy2)}" stroke="#6B5348" stroke-width="${f(h * 0.009)}" fill="none" stroke-linecap="round"/>`;
-      dem += tan(cx2, cy2, rx2, ry * 0.85, i % 2 ? '#2F5C56' : '#3A6B64');
+      canh += `<path d="M${f(tx(k + 0.09))},${f(cy2 + h * 0.05)} Q${f((tx(k) + cx2) / 2)},${f(cy2 + ry)} ${f(cx2)},${f(cy2)}" stroke="#33252E" stroke-width="${f(h * 0.009)}" fill="none" stroke-linecap="round"/>`;
+      dem += tan(cx2, cy2, rx2, ry * 0.85, i % 2 ? '#28313E' : '#303A47');
     }
   }
   return s + canh + dem;
 }
 
-function may(cx, cy, w, op = 0.8) {
-  let s = `<g opacity="${op}" fill="#FFFFFF">`;
+function may(cx, cy, w, op = 0.8, mau = '#FFFFFF') {
+  let s = `<g opacity="${op}" fill="${mau}">`;
   s += `<ellipse cx="${cx}" cy="${cy}" rx="${f(w * 0.5)}" ry="${f(w * 0.09)}"/>`;
   s += `<ellipse cx="${f(cx - w * 0.18)}" cy="${f(cy - w * 0.07)}" rx="${f(w * 0.2)}" ry="${f(w * 0.1)}"/>`;
   s += `<ellipse cx="${f(cx + w * 0.1)}" cy="${f(cy - w * 0.1)}" rx="${f(w * 0.24)}" ry="${f(w * 0.12)}"/>`;
@@ -168,20 +169,20 @@ function may(cx, cy, w, op = 0.8) {
 function nhaTho(x, y) {
   // Nhà thờ nhỏ có tháp chuông, nhìn từ xa
   return `<g transform="translate(${x},${y})">
-    <path class="nx" fill="#F7E7D4" d="M-4,0 L-4,-17 L26,-17 L26,0 Z"/>
-    <path class="nx" fill="#C4877A" d="M-7,-17 L11,-29 L29,-17 Z"/>
-    <path class="nx" fill="#F7E7D4" d="M-15,0 L-15,-34 L-4,-34 L-4,0 Z"/>
-    <path class="nx" fill="#C4877A" d="M-17,-34 L-9.5,-56 L-2,-34 Z"/>
+    <path class="nx" fill="#E8B79A" d="M-4,0 L-4,-17 L26,-17 L26,0 Z"/>
+    <path class="nx" fill="#6E3644" d="M-7,-17 L11,-29 L29,-17 Z"/>
+    <path class="nx" fill="#E8B79A" d="M-15,0 L-15,-34 L-4,-34 L-4,0 Z"/>
+    <path class="nx" fill="#6E3644" d="M-17,-34 L-9.5,-56 L-2,-34 Z"/>
     <path d="M-9.5,-56 v-9 M-12.5,-62 h6" stroke="${INK}" stroke-width="1.3" stroke-linecap="round"/>
-    <path d="M-9.5,-27 v6 M3,-11 v6 M11,-11 v6 M19,-11 v6" stroke="#8C6E66" stroke-width="2" stroke-linecap="round"/>
+    <path d="M-9.5,-27 v6 M3,-11 v6 M11,-11 v6 M19,-11 v6" stroke="#FFE07A" stroke-width="2.2" stroke-linecap="round"/>
   </g>`;
 }
 function bietThu(x, y, s = 1) {
   return `<g transform="translate(${x},${y}) scale(${s})">
-    <path class="nx" fill="#F6E9DA" d="M0,0 L0,-11 L22,-11 L22,0 Z"/>
-    <path class="nx" fill="#C9766A" d="M-3,-11 L5,-21 L19,-21 L25,-11 Z"/>
-    <path class="nx" fill="#C9766A" d="M15,-21 v-6 h4 v6"/>
-    <path d="M6,-7 v4 M15,-7 v4" stroke="#8C6E66" stroke-width="1.8" stroke-linecap="round"/>
+    <path class="nx" fill="#E3B196" d="M0,0 L0,-11 L22,-11 L22,0 Z"/>
+    <path class="nx" fill="#6E3644" d="M-3,-11 L5,-21 L19,-21 L25,-11 Z"/>
+    <path class="nx" fill="#6E3644" d="M15,-21 v-6 h4 v6"/>
+    <path d="M6,-7 v4 M15,-7 v4" stroke="#FFE07A" stroke-width="2" stroke-linecap="round"/>
   </g>`;
 }
 
@@ -197,7 +198,7 @@ function kim(cx, cy, r, dir, spread, n, col) {
 }
 function canhThong(pts, w, fans) {
   // pts: đường đi của cành; fans: số chùm lá dọc cành
-  let s = `<path d="${smoothOpen(pts)}" fill="none" stroke="#5C4840" stroke-width="${w}" stroke-linecap="round"/>`;
+  let s = `<path d="${smoothOpen(pts)}" fill="none" stroke="#2E2230" stroke-width="${w}" stroke-linecap="round"/>`;
   const n = pts.length;
   for (let i = 0; i < fans; i++) {
     const t = 0.25 + 0.75 * (i / (fans - 1 || 1));
@@ -206,8 +207,8 @@ function canhThong(pts, w, fans) {
     const x = pts[idx][0] + (pts[idx + 1][0] - pts[idx][0]) * lt;
     const y = pts[idx][1] + (pts[idx + 1][1] - pts[idx][1]) * lt;
     const dir = Math.atan2(pts[idx + 1][1] - pts[idx][1], pts[idx + 1][0] - pts[idx][0]) * 180 / Math.PI;
-    s += kim(x, y, R(34, 48), dir + pick([-55, 50, 0, -30, 35]), 62, 20, '#2B5450');
-    s += kim(x + R(-6, 6), y + R(-6, 6), R(26, 38), dir + pick([-40, 40, 10]), 70, 14, '#40736B');
+    s += kim(x, y, R(34, 48), dir + pick([-55, 50, 0, -30, 35]), 62, 20, '#1C2A2C');
+    s += kim(x + R(-6, 6), y + R(-6, 6), R(26, 38), dir + pick([-40, 40, 10]), 70, 14, '#2F4543');
   }
   return s;
 }
@@ -506,7 +507,7 @@ function xu(cx, cy, rx, ry, n = 16, amp = 0.07) {
 }
 function bong(cx, cy, rx, ry, n, amp) {
   // một khối bông: quầng mờ phía sau cho cảm giác lông tơ + hình chính viền nhạt
-  return `<ellipse cx="${f(cx)}" cy="${f(cy)}" rx="${f(rx + 3)}" ry="${f(ry + 3)}" fill="#FFFBF3" opacity=".9" filter="url(#mem)"/>`
+  return `<ellipse cx="${f(cx)}" cy="${f(cy)}" rx="${f(rx + 2)}" ry="${f(ry + 2)}" fill="#FFF6E8" opacity=".55" filter="url(#mem)"/>`
     + `<path class="nt" d="${xu(cx, cy, rx, ry, n, amp)}" fill="${THO.kem}"/>`;
 }
 function longTo(cx, cy, rx, ry, n) {
@@ -525,7 +526,7 @@ function taiTho(ben, chu) {
     + bong(0, 44, 15, 50, 18, 0.06)
     + `<ellipse cx="0" cy="46" rx="10.5" ry="40" fill="${THO.loTai}"/>`
     + `<ellipse cx="0" cy="46" rx="10.5" ry="40" fill="none" stroke="#E4D6C1" stroke-width=".8" stroke-dasharray="2 2.4"/>`
-    + `<text class="theu" transform="translate(0,46) rotate(90)" text-anchor="middle" dy=".33em" font-size="15.5">${chu}</text>`
+    + `<text class="theu" transform="translate(0,46) rotate(${ben * 90})" text-anchor="middle" dy=".33em" font-size="15.5">${chu}</text>`
     + '</g>';
 }
 function thoSau() {
@@ -680,16 +681,21 @@ function coGai() {
 function canh() {
   let s = '';
 
-  // trời + nắng
+  // trời hoàng hôn: mây tầng trên sẫm màu gạch, bụng mây hắt nắng vàng
   s += `<rect x="-12" y="-12" width="${W + 24}" height="780" fill="url(#troi)"/>`;
-  s += `<circle cx="262" cy="296" r="170" fill="url(#quang)"/>`;
-  s += `<circle cx="262" cy="296" r="52" fill="#FFF9E6"/>`;
-  s += may(560, 150, 230, 0.75) + may(790, 245, 170, 0.6) + may(120, 420, 190, 0.55) + may(480, 300, 120, 0.5);
-  // vài cánh chim
-  s += `<path d="M612,214 q8,-9 15,0 q8,-8 15,1 M664,250 q6,-7 11,0 q6,-6 11,1 M560,238 q5,-6 9,0 q5,-5 9,1" fill="none" stroke="${INK}" stroke-width="1.6" stroke-linecap="round" opacity=".6"/>`;
+  s += may(300, 96, 560, 0.5, '#A23C2A') + may(720, 60, 440, 0.45, '#A9402A') + may(640, 214, 400, 0.45, '#C24F28') + may(130, 236, 320, 0.4, '#B84828');
+  s += may(450, 168, 330, 0.5, '#FFCB6B') + may(760, 300, 260, 0.45, '#FFC766') + may(250, 350, 300, 0.4, '#FFD27A');
+  s += `<g fill="#C4532F" opacity=".5"><ellipse cx="610" cy="392" rx="210" ry="9"/><ellipse cx="240" cy="408" rx="170" ry="8"/><ellipse cx="800" cy="470" rx="130" ry="7"/></g>`;
+  s += `<g fill="#FFE9A6" opacity=".75"><ellipse cx="420" cy="452" rx="220" ry="7"/><ellipse cx="170" cy="478" rx="150" ry="6"/><ellipse cx="660" cy="430" rx="170" ry="6"/></g>`;
+  // quầng sáng chân trời + mặt trời vừa chạm dãy núi
+  s += `<ellipse cx="330" cy="545" rx="430" ry="64" fill="#FFE9A0" opacity=".8" filter="url(#mo)"/>`;
+  s += `<circle cx="${MT.x}" cy="${MT.y}" r="300" fill="url(#quang)"/>`;
+  s += `<circle cx="${MT.x}" cy="${MT.y}" r="44" fill="#FFF4BE"/>`;
+  // vài cánh chim bay về tổ
+  s += `<path d="M612,214 q8,-9 15,0 q8,-8 15,1 M664,250 q6,-7 11,0 q6,-6 11,1 M560,238 q5,-6 9,0 q5,-5 9,1" fill="none" stroke="#4A2A30" stroke-width="1.7" stroke-linecap="round" opacity=".8"/>`;
 
-  // LangBiang hai đỉnh
-  s += doi(langbiang, 760, '#BCD1DF', 'stroke="#8CA3B8" stroke-width="1.4"');
+  // LangBiang hai đỉnh in bóng tím
+  s += doi(langbiang, 760, '#5B3F66', 'stroke="#3F2B4B" stroke-width="1.4"');
   let gach = '';
   for (const [cx, w] of DINH) {
     for (let i = 0; i < 9; i++) {
@@ -697,81 +703,90 @@ function canh() {
       gach += `M${f(x)},${f(y)}l${f(-10 - i)},${f(22 + i * 2)}`;
     }
   }
-  s += `<path d="${gach}" fill="none" stroke="#8CA3B8" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>`;
-  s += `<g filter="url(#mo)" fill="#FFFFFF"><ellipse cx="600" cy="560" rx="340" ry="26" opacity=".85"/><ellipse cx="170" cy="578" rx="260" ry="22" opacity=".8"/></g>`;
-  s += may(752, 550, 250, 0.85) + may(868, 562, 130, 0.8);
+  s += `<path d="${gach}" fill="none" stroke="#3F2B4B" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>`;
+  // sương chiều hắt nắng dưới chân núi
+  s += `<g filter="url(#mo)" fill="#FFB870"><ellipse cx="600" cy="562" rx="340" ry="24" opacity=".6"/><ellipse cx="170" cy="580" rx="260" ry="20" opacity=".65"/></g>`;
+  s += may(752, 552, 250, 0.7, '#FFB573') + may(868, 564, 130, 0.65, '#F9A066');
 
   // dãy đồi xa có rặng thông nhỏ
-  s += thongXa(ridge2, -10, W + 10, 12, 24, '#93B5BB');
-  s += doi(ridge2, 760, '#A5C3C8');
-  s += `<g filter="url(#mo)" fill="#FFFFFF"><ellipse cx="330" cy="646" rx="330" ry="18" opacity=".75"/><ellipse cx="780" cy="640" rx="200" ry="16" opacity=".7"/></g>`;
+  s += thongXa(ridge2, -10, W + 10, 12, 24, '#3E2A4C');
+  s += doi(ridge2, 760, '#4C3459');
+  s += `<g filter="url(#mo)" fill="#F59A68"><ellipse cx="330" cy="648" rx="330" ry="16" opacity=".45"/><ellipse cx="780" cy="642" rx="200" ry="14" opacity=".4"/></g>`;
 
-  // hai sườn đồi thông ôm lấy hồ
+  // hai sườn đồi thông ôm lấy hồ, nhà đã lên đèn
   let doi3 = '<g id="doi3">';
-  doi3 += thongXa(doi3T, -10, 520, 16, 30, '#5E918E');
-  doi3 += doi(doi3T, HO_Y, '#7FAAA6');
-  doi3 += thongXa(doi3P, 380, W + 10, 16, 30, '#558986');
-  doi3 += doi(doi3P, HO_Y, '#72A09D');
-  doi3 += rungThong(doi3T, -10, 500, 34, '#4E817D', '#5C8F8A', '#5B4A44');
-  doi3 += rungThong(doi3P, 420, W + 10, 34, '#487A77', '#56898A', '#5B4A44');
+  doi3 += thongXa(doi3T, -10, 520, 16, 30, '#2C1F39');
+  doi3 += doi(doi3T, HO_Y, '#3D2B4A');
+  doi3 += thongXa(doi3P, 380, W + 10, 16, 30, '#281C35');
+  doi3 += doi(doi3P, HO_Y, '#372644');
+  doi3 += rungThong(doi3T, -10, 500, 34, '#2E2139', '#3A2A47', '#231A2C');
+  doi3 += rungThong(doi3P, 420, W + 10, 34, '#2A1E35', '#362743', '#231A2C');
   doi3 += bietThu(226, 716, 1) + bietThu(318, 728, 0.8);
   doi3 += nhaTho(276, 700);
-  doi3 += thongVua(254, 722, 36, '#4E817D', '#5C8F8A', '#5B4A44') + thongVua(304, 716, 30, '#4E817D', '#5C8F8A', '#5B4A44');
+  doi3 += thongVua(254, 722, 36, '#2E2139', '#3A2A47', '#231A2C') + thongVua(304, 716, 30, '#2E2139', '#3A2A47', '#231A2C');
   doi3 += '</g>';
   s += doi3;
 
-  // mặt hồ + bóng đồi in xuống nước
+  // mặt hồ nhuộm màu trời + bóng đồi in xuống nước
   s += `<rect x="-12" y="${HO_Y}" width="${W + 24}" height="170" fill="url(#ho)"/>`;
-  s += `<g clip-path="url(#cat-ho)" opacity=".3"><use href="#doi3" transform="translate(0,${HO_Y * 2}) scale(1,-1)"/></g>`;
+  s += `<g clip-path="url(#cat-ho)" opacity=".5"><use href="#doi3" transform="translate(0,${HO_Y * 2}) scale(1,-1)"/></g>`;
   s += `<rect x="-12" y="${HO_Y}" width="${W + 24}" height="170" fill="url(#ho-suong)"/>`;
+  // vệt nắng vàng loang trên mặt nước, ngay dưới mặt trời
+  let nang = '';
+  for (let i = 0; i < 36; i++) {
+    const y = R(HO_Y + 4, HO_Y + 124), k = (y - HO_Y) / 124;
+    const l = R(14, 46) * (0.6 + k);
+    nang += `M${f(MT.x + R(-1, 1) * (24 + k * 72) - l / 2)},${f(y)}h${f(l)}`;
+  }
+  s += `<path d="${nang}" stroke="#FFF3B5" stroke-width="2.2" stroke-linecap="round" opacity=".9" fill="none"/>`;
   let song = '';
   for (let i = 0; i < 26; i++) {
     const y = R(HO_Y + 8, HO_Y + 118), x = R(0, W), l = R(18, 70);
     song += `M${f(x)},${f(y)}h${f(l)}`;
   }
-  s += `<path d="${song}" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity=".8" fill="none"/>`;
-  s += `<g filter="url(#mo)" fill="#FFFFFF"><ellipse cx="450" cy="${HO_Y + 4}" rx="380" ry="10" opacity=".8"/><ellipse cx="760" cy="790" rx="170" ry="12" opacity=".6"/></g>`;
+  s += `<path d="${song}" stroke="#FFD98A" stroke-width="1.6" stroke-linecap="round" opacity=".6" fill="none"/>`;
+  s += `<g filter="url(#mo)" fill="#FFD7A0"><ellipse cx="450" cy="${HO_Y + 4}" rx="380" ry="10" opacity=".5"/><ellipse cx="760" cy="790" rx="170" ry="12" opacity=".35"/></g>`;
 
-  // đồng cỏ
-  s += doi(dongCo, H + 12, 'url(#co)', `stroke="${INK}" stroke-width="1.6" stroke-opacity=".5"`);
-  s += `<ellipse cx="330" cy="1010" rx="330" ry="70" fill="#C4E0B4" opacity=".55" filter="url(#mo)"/>`;
+  // đồng cỏ lúc chạng vạng, còn một vạt nắng cuối ngày
+  s += doi(dongCo, H + 12, 'url(#co)', 'stroke="#2B2433" stroke-width="1.6" stroke-opacity=".5"');
+  s += `<ellipse cx="300" cy="960" rx="340" ry="80" fill="#FFB25A" opacity=".3" filter="url(#mo)"/>`;
   // thông gần hai bên
   s += thongLon(158, dongCo(158) + 10, 400, 10);
   s += thongLon(752, dongCo(752) + 6, 236, -4);
   s += thongLon(832, dongCo(832) + 12, 318, 6);
   s += thongLon(890, dongCo(890) + 18, 392, -8);
-  // dải cỏ hồng tháng mười một ở mép đồng cỏ
+  // dải cỏ hồng tháng mười một ở mép đồng cỏ, bắt nắng chiều
   let coHong = '';
   for (let i = 0; i < 150; i++) {
     const x = R(0, W), y = dongCo(x) + R(3, 30);
     coHong += `M${f(x)},${f(y)}q${f(R(-3, 3))},${f(-R(5, 9))} ${f(R(-5, 5))},${f(-R(10, 17))}`;
   }
-  s += `<path d="${coHong}" fill="none" stroke="#E7A9C0" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>`;
-  // bóng cây đổ trên cỏ
-  s += `<g fill="#5E9A7C" opacity=".35" filter="url(#mo)"><ellipse cx="200" cy="892" rx="120" ry="12"/><ellipse cx="800" cy="900" rx="130" ry="13"/></g>`;
+  s += `<path d="${coHong}" fill="none" stroke="#F08FA8" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>`;
+  // bóng cây đổ dài về bên phải
+  s += `<g fill="#1B2626" opacity=".32" filter="url(#mo)"><ellipse cx="290" cy="894" rx="170" ry="11"/><ellipse cx="860" cy="902" rx="120" ry="12"/></g>`;
   // cỏ + hoa dại
   let co = '', hoaDai = '';
   for (let i = 0; i < 150; i++) {
     const x = R(0, W), y = R(dongCo(x) + 14, 1190), k = 0.6 + (y - 880) / 420;
     co += `M${f(x)},${f(y)}l${f(-3 * k)},${f(-9 * k)}M${f(x + 3 * k)},${f(y)}l${f(1 * k)},${f(-11 * k)}M${f(x + 6 * k)},${f(y)}l${f(4 * k)},${f(-8 * k)}`;
   }
-  s += `<path d="${co}" fill="none" stroke="#4F8C6E" stroke-width="1.5" stroke-linecap="round" opacity=".75"/>`;
+  s += `<path d="${co}" fill="none" stroke="#2F4A40" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>`;
   for (let i = 0; i < 46; i++) {
     const x = R(0, W), y = R(dongCo(x) + 20, 1150), k = 0.7 + (y - 880) / 500;
-    hoaDai += `<circle cx="${f(x)}" cy="${f(y)}" r="${f(2.4 * k)}" fill="${pick(['#FFFFFF', '#FFFFFF', '#FBE7A6', '#F6C9DA'])}"/>`;
+    hoaDai += `<circle cx="${f(x)}" cy="${f(y)}" r="${f(2.4 * k)}" fill="${pick(['#FFF1D0', '#FFE3A0', '#FFD98A', '#F9B8C4'])}"/>`;
   }
   s += hoaDai;
 
   // bụi dã quỳ bên phải
-  s += `<path class="n" d="${blob(820, 1010, 104, 74, 14, 0.14)}" fill="#5F9B72"/>`;
-  s += `<path d="${blob(790, 990, 60, 40, 10, 0.2)}" fill="#7DB487" opacity=".8"/>`;
-  for (let i = 0; i < 14; i++) s += la(R(730, 890), R(960, 1060), R(22, 34), R(-160, -20), pick(['#4F8C63', '#63A074']));
+  s += `<path class="n" d="${blob(820, 1010, 104, 74, 14, 0.14)}" fill="#4A6B4A"/>`;
+  s += `<path d="${blob(790, 990, 60, 40, 10, 0.2)}" fill="#6B8A52" opacity=".8"/>`;
+  for (let i = 0; i < 14; i++) s += la(R(730, 890), R(960, 1060), R(22, 34), R(-160, -20), pick(['#3F5F45', '#4F7350']));
   for (const [x, y, k] of [[742, 962, 1], [786, 940, 1.15], [836, 950, 1.05], [880, 972, 1.2], [760, 1004, 1.2], [812, 992, 1.3], [862, 1020, 1.25], [724, 1030, 1.05], [796, 1044, 1.35], [846, 1068, 1.2], [896, 1046, 1.1]]) {
     s += daQuy(x, y, k, R(0, 30));
   }
 
-  // bóng đổ dưới chân cô gái
-  s += `<ellipse cx="${GAI.x + 34}" cy="${GAI.y + 728 * GAI.s}" rx="112" ry="15" fill="#3F7A60" opacity=".4" filter="url(#mo)"/>`;
+  // bóng cô gái đổ dài về bên phải (nắng xiên từ bên trái)
+  s += `<ellipse cx="${GAI.x + 120}" cy="${f(GAI.y + 730 * GAI.s)}" rx="190" ry="13" fill="#1B2626" opacity=".42" filter="url(#mo)"/>`;
 
   // hàng cẩm tú cầu phía sau (nằm sau lưng cô gái)
   const sau = [
@@ -780,7 +795,7 @@ function canh() {
   ];
   for (let i = 0; i < 22; i++) {
     const x = pick([R(-10, 330), R(560, W + 10)]);
-    s += la(x, R(1100, 1160), R(30, 44), R(-170, -10), pick(['#4E8B6A', '#5C9A76', '#437C5E']));
+    s += la(x, R(1100, 1160), R(30, 44), R(-170, -10), pick(['#3E6A55', '#4A7860', '#35604C']));
   }
   for (const [x, y, r, p] of sau) s += tuCau(x, y, r, TU_CAU[p]);
 
@@ -798,22 +813,20 @@ function canh() {
   ];
   let laTC = '';
   for (let i = 0; i < 46; i++) {
-    const x = R(-10, W + 10);
-    const y = R(1170, 1290);
-    laTC += la(x, y, R(34, 52), R(-170, -10), pick(['#4E8B6A', '#5C9A76', '#437C5E']));
+    laTC += la(R(-10, W + 10), R(1170, 1290), R(34, 52), R(-170, -10), pick(['#3E6A55', '#4A7860', '#35604C']));
   }
   s += laTC;
   for (const [x, y, r, p] of cum) s += tuCau(x, y, r, TU_CAU[p]);
 
-  // gốc thông to sát mép trái + cành rủ phía trên
-  s += `<path class="n" fill="#5C4840" d="M10,1300 C26,900 42,500 50,-20 L98,-20 C92,500 98,900 116,1300 Z"/>`;
-  s += `<path fill="#7A6358" opacity=".8" d="M30,1300 C40,900 52,500 58,-20 L68,-20 C62,500 56,900 54,1300Z"/>`;
+  // gốc thông to sát mép trái in bóng sẫm, mép phải bắt một viền nắng; cành rủ phía trên
+  s += `<path class="n" fill="#2E2230" d="M10,1300 C26,900 42,500 50,-20 L98,-20 C92,500 98,900 116,1300 Z"/>`;
+  s += `<path fill="#C76A35" opacity=".7" d="M89,-20 L98,-20 C92,500 98,900 116,1300 L105,1300 C89,900 83,500 89,-20Z"/>`;
   let vo = '';
   for (let i = 0; i < 26; i++) {
-    const y = R(20, 1080), x = 50 + (1080 - y) * 0 + R(-18, 34) + y * 0.01;
+    const y = R(20, 1080), x = 50 + R(-18, 26) + y * 0.01;
     vo += `M${f(x)},${f(y)}q${f(R(-4, 4))},${f(R(14, 26))} ${f(R(-3, 3))},${f(R(30, 52))}`;
   }
-  s += `<path d="${vo}" fill="none" stroke="#3E302B" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>`;
+  s += `<path d="${vo}" fill="none" stroke="#1A1220" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>`;
   s += canhThong([[86, 236], [150, 214], [226, 206], [300, 176], [352, 168]], 7, 6);
   s += canhThong([[84, 92], [150, 70], [230, 76], [300, 48], [380, 52]], 6, 6);
   s += canhThong([[170, 212], [200, 250], [236, 268]], 4, 3);
@@ -851,12 +864,13 @@ function defs() {
   for (let i = 0; i < 13; i++) dq += `<ellipse cx="0" cy="-9.5" rx="2.9" ry="6.6" transform="rotate(${f(i * 27.7)})"/>`;
   return `<defs>
     <linearGradient id="troi" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#C6DCEB"/><stop offset=".4" stop-color="#E1ECEF"/><stop offset=".64" stop-color="#FBF0DF"/><stop offset="1" stop-color="#FBF0DF"/>
+      <stop offset="0" stop-color="#C24A2C"/><stop offset=".22" stop-color="#E5641F"/><stop offset=".45" stop-color="#F5841C"/><stop offset=".62" stop-color="#FBA428"/><stop offset=".74" stop-color="#FFC64A"/><stop offset=".84" stop-color="#FFDD7E"/><stop offset="1" stop-color="#FFDD7E"/>
     </linearGradient>
-    <radialGradient id="quang"><stop offset="0" stop-color="#FFF6D8" stop-opacity=".95"/><stop offset=".45" stop-color="#FFF3D6" stop-opacity=".45"/><stop offset="1" stop-color="#FFF3D6" stop-opacity="0"/></radialGradient>
-    <linearGradient id="ho" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCEAF0"/><stop offset="1" stop-color="#BBD7E3"/></linearGradient>
-    <linearGradient id="ho-suong" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".1"/><stop offset=".6" stop-color="#E4EFF3" stop-opacity=".55"/><stop offset="1" stop-color="#D5E6EC" stop-opacity=".8"/></linearGradient>
-    <linearGradient id="co" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ACD0A8"/><stop offset=".5" stop-color="#93C09B"/><stop offset="1" stop-color="#7BAE8C"/></linearGradient>
+    <radialGradient id="quang"><stop offset="0" stop-color="#FFF6C8" stop-opacity=".95"/><stop offset=".3" stop-color="#FFD867" stop-opacity=".6"/><stop offset="1" stop-color="#FF9A2E" stop-opacity="0"/></radialGradient>
+    <linearGradient id="ho" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC660"/><stop offset=".45" stop-color="#F58E3A"/><stop offset="1" stop-color="#A7563F"/></linearGradient>
+    <linearGradient id="ho-suong" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD27A" stop-opacity="0"/><stop offset=".6" stop-color="#E88A4A" stop-opacity=".25"/><stop offset="1" stop-color="#8E4A45" stop-opacity=".5"/></linearGradient>
+    <linearGradient id="co" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8C8A52"/><stop offset=".35" stop-color="#5F7350"/><stop offset="1" stop-color="#3C4F47"/></linearGradient>
+    <linearGradient id="chieu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A1838" stop-opacity="0"/><stop offset=".62" stop-color="#2A1838" stop-opacity="0"/><stop offset="1" stop-color="#2A1838" stop-opacity=".26"/></linearGradient>
     <clipPath id="cat-ho"><rect x="-12" y="${HO_Y}" width="${W + 24}" height="170"/></clipPath>
     <clipPath id="mep"><path d="${mepTranh()}"/></clipPath>
     <filter id="mo" x="-30%" y="-120%" width="160%" height="340%"><feGaussianBlur stdDeviation="14"/></filter>
@@ -884,7 +898,7 @@ function defs() {
     </g>
     <g id="h4"><path d="${h4}" stroke="${INK}" stroke-width=".7" stroke-opacity=".45"/><circle r="1.2" fill="#FFFFFF" opacity=".9"/></g>
     <g id="sao5"><path d="${sao}" fill="#86AEE2" stroke="${INK}" stroke-width=".8" stroke-opacity=".7"/><circle r="1.5" fill="#FFFFFF"/></g>
-    <g id="dq"><g fill="#F4C23C" stroke="${INK}" stroke-width=".7" stroke-opacity=".6">${dq}</g><circle r="4.6" fill="#C9801F" stroke="${INK}" stroke-width=".7" stroke-opacity=".6"/></g>
+    <g id="dq"><g fill="#F7B531" stroke="${INK}" stroke-width=".7" stroke-opacity=".6">${dq}</g><circle r="4.6" fill="#A85A1C" stroke="${INK}" stroke-width=".7" stroke-opacity=".6"/></g>
   </defs>`;
 }
 
@@ -903,11 +917,13 @@ function svg() {
   const d = defs();
   const scene = canh();
   return `<svg class="tranh" id="tranh" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="tranh-ten">
-  <title id="tranh-ten">Phác thảo: cô gái búi tóc, không vẽ mắt, mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông màu kem đeo yếm, hai tai thêu chữ Tặng Vê và Minh Thư, đứng trên đồng cỏ Đà Lạt có đồi thông, mặt hồ sương và đỉnh LangBiang phía xa</title>
+  <title id="tranh-ten">Phác thảo: cô gái búi tóc, không vẽ mắt, mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông màu kem đeo yếm, hai tai thêu chữ Tặng Vê và Minh Thư, đứng trên đồng cỏ Đà Lạt lúc hoàng hôn, trời cam rực sau dãy núi tím, đồi thông in bóng, mặt hồ loang nắng vàng và đỉnh LangBiang phía xa</title>
   ${d}
   <g filter="url(#rung)"><g clip-path="url(#mep)">
   ${scene}
-  <rect x="0" y="0" width="${W}" height="${H}" filter="url(#loang)" opacity=".28"/>
+  <rect x="0" y="0" width="${W}" height="${H}" fill="url(#chieu)"/>
+  <rect x="0" y="0" width="${W}" height="${H}" fill="#FF8A2B" opacity=".07"/>
+  <rect x="0" y="0" width="${W}" height="${H}" filter="url(#loang)" opacity=".12"/>
   <rect x="0" y="0" width="${W}" height="${H}" filter="url(#hat)"/>
   </g></g>
   ${lopLapLanh()}
@@ -963,10 +979,10 @@ const BODY = `
 
   <figure class="to-giay">
     ${svg()}
-    <figcaption>Đà Lạt, một sáng nhiều sương</figcaption>
+    <figcaption>Đà Lạt, một chiều hoàng hôn</figcaption>
   </figure>
 
-  <p class="ghi-chu">Trong tranh: đỉnh LangBiang hai ngọn, đồi thông, nhà thờ nhỏ bên hồ sương, bụi dã quỳ tháng mười một và cẩm tú cầu dưới chân. Đoá hoa vẽ theo bó thật: lily xanh, hồng kem, hồng môn xanh, hoa sao nhỏ, nụ tulip trắng, giấy ren trắng và ruy băng xanh. Tay còn lại ôm bé thỏ bông Franilla lông xù màu kem, cổ đeo yếm, hai tai thêu chữ nâu vàng.</p>
+  <p class="ghi-chu">Trong tranh: hoàng hôn cam rực sau dãy núi, đỉnh LangBiang hai ngọn và đồi thông in bóng tím, nhà thờ nhỏ đã lên đèn bên mặt hồ loang nắng, bụi dã quỳ tháng mười một và cẩm tú cầu dưới chân. Đoá hoa vẽ theo bó thật: lily xanh, hồng kem, hồng môn xanh, hoa sao nhỏ, nụ tulip trắng, giấy ren trắng và ruy băng xanh. Tay còn lại ôm bé thỏ bông Franilla lông xù màu kem, cổ đeo yếm, hai tai thêu chữ nâu vàng.</p>
 </main>
 `;
 
