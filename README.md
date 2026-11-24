@@ -7,7 +7,7 @@ Thiệp sinh nhật vẽ tay bằng SVG: cô gái mặc váy lụa xanh viền r
 Hai khung cảnh, cùng một cô gái:
 
 - `phac-thao.html` + `phac-thao.gif`: cảnh 01, hoàng hôn bên hồ giữa đồi thông.
-- `phac-thao-la-mozza.html` + `phac-thao-la-mozza.gif`: cảnh 02, sân hiên quán La Mozza lúc hoàng hôn. Cảnh này dựng theo mô tả thiết kế của quán (nhà đá, gỗ, mái ngói đất nung, xây bậc thang giữa rừng thông, lò pizza nướng củi, nhìn ra thung lũng), chưa đối chiếu với ảnh thật.
+- `phac-thao-la-mozza.html` + `phac-thao-la-mozza.gif`: cảnh 02, sân vườn quán La Mozza lúc hoàng hôn. Bố cục vẽ theo ảnh chụp thật của quán: tán dù vải kem khung gỗ, nền sỏi, bàn bát giác mặt đá trắng chân sắt uốn, ghế sắt đen lưng mắt cáo nệm kem, hàng cây rậm xen hoa tím, cây tùng, nhìn ra khu biệt thự trắng trên đồi thông.
 
 Mỗi file HTML là một file duy nhất, mở offline được bằng cách bấm đúp. GIF rộng 540x768, lặp mỗi 4 giây.
 
