@@ -18,8 +18,8 @@ const path = require('path');
 /* ---------- NỘI DUNG ---------- */
 const MAT_MA = '1314';
 const TIEU_DE_TAB = 'Thiệp gửi Hoa';
-// Màn khoá: câu của owner, giữ nguyên từng chữ, chỉ ngắt thành hai dòng cho vừa màn hình. Bốn ô mật mã nằm ngay dưới.
-const KHOA = { tieuDe: ['Hôm nay là 1 ngày đẹp trời', 'tui rất thích bà'], phu: 'Nhập bốn số để mở thiệp' };
+// Màn khoá: câu của owner, giữ nguyên từng chữ, chỉ ngắt dòng cho vừa màn hình. Bốn ô mật mã nằm ngay dưới.
+const KHOA = { tieuDe: ['Hôm nay là 1 ngày đẹp trời', 'tui rất thích bà', 'thấy thế nào'], phu: 'Nhập bốn số để mở thiệp' };
 const MO_DAU = {
   goi: 'Gửi Hoa,',
   dong: ['[Một câu mở đầu, ví dụ: tui có chuyện này muốn kể bà nghe.]'],

@@ -48,13 +48,13 @@ Bản xem thử thiệp kéo (Artifact riêng tư của owner): https://claude.a
 - Mật mã mở thiệp là 1314.
 - Xưng hô thường ngày của hai người: "tui" với "bà", hoặc "mình" với "bạn".
 - Màn mở đầu ghi "Gửi Hoa," (owner bảo đổi từ "Gửi Vê"). Chữ thêu trên tai thỏ vẫn giữ "Tặng Vê" và "Minh Thư".
-- Màn khoá: thay "Thiệp này có khoá" bằng nguyên câu "Hôm nay là 1 ngày đẹp trời tui rất thích bà". Giữ nguyên từng chữ, không tách, không sửa. Agent từng tách câu này ra hai chỗ và bị owner hỏi lại.
+- Màn khoá: thay "Thiệp này có khoá" bằng nguyên câu "Hôm nay là 1 ngày đẹp trời tui rất thích bà thấy thế nào". Ba chữ "thấy thế nào" là một phần của câu, không phải owner hỏi ý agent. Giữ nguyên từng chữ, không tách, không sửa, không nhận xét câu này khi owner không hỏi. Agent đã hiểu sai hai lần: lần đầu tách câu ra hai chỗ, lần sau cắt mất "thấy thế nào".
 - Cảnh 02: bàn và người phải cân đối. Bản bàn nhỏ bằng một phần tư người đã bị chê.
 - Lời cuối owner đề xuất: "Chúc mừng sinh nhật tình yêu đời mình". Agent có đưa bản nhẹ hơn ("người mình thương"), owner chưa chọn.
 
 ## 4. Agent tự chọn, owner chưa xác nhận
 
-- Thiệp kéo: câu trên màn khoá ngắt thành hai dòng sau chữ "đẹp trời" cho vừa màn hình. Vì lời tỏ tình đã nằm ở màn khoá, khúc Hoàng hôn trở lại là chữ giữ chỗ.
+- Thiệp kéo: câu trên màn khoá ngắt thành ba dòng (sau "đẹp trời" và sau "thích bà") cho vừa màn hình. Vì lời tỏ tình đã nằm ở màn khoá, khúc Hoàng hôn trở lại là chữ giữ chỗ.
 - Thiệp kéo: giữ dòng phụ "Nhập bốn số để mở thiệp" dưới bốn ô mật mã. Chữ giữ chỗ còn lại viết theo giọng "tui" với "bà".
 - Cảnh 02: bộ bàn ghế phóng 1,7 lần (hằng `BAN`) để mặt bàn cao ngang hông cô gái, dù và bàn dời sang trái 32 đơn vị, cô gái dời sang trái 24 đơn vị (`gaiX` 306). Ghế bên phải bị mép tranh cắt một phần.
 - Thiệp kéo: năm nhãn thời điểm (Bình minh, Buổi sáng, Giữa trưa, Xế chiều, Hoàng hôn), lời tỏ tình nằm ở khúc Hoàng hôn, tách khỏi lời chúc ở tờ tranh cuối.
@@ -142,3 +142,4 @@ Những điều dễ vấp:
 | 24/11 | Owner chốt ý thiệp kéo vừa chúc sinh nhật vừa tỏ tình, mở tại La Mozza, mật mã 1314. Dựng bản khung `thiep.html` với chữ giữ chỗ |
 | 24/11 | Thiệp kéo: đổi thành "Gửi Hoa", màn khoá ghi "Hôm nay là", đưa câu của owner vào lời mở đầu và lời tỏ tình. Cảnh 02: phóng bàn ghế cho cân với người, làm lại GIF |
 | 24/11 | Màn khoá ghi nguyên câu của owner, bỏ cách tách câu ra hai chỗ |
+| 24/11 | Màn khoá: bổ sung "thấy thế nào" cho đủ câu của owner |
