@@ -4,7 +4,7 @@ Cập nhật lần cuối: 24/11/2026.
 
 Phiên mới hãy đọc hết file này trước khi làm tiếp.
 
-Thư mục `thiep-sinh-nhat/` là một dự án riêng, đang nằm tạm trong repo `graduation` vì phiên trước không có quyền tạo repo mới trên GitHub. Các quy tắc trong `AGENTS.md` của repo (mỗi khách một trang, cổng ngày sinh, thông tin buổi lễ) viết cho thiệp tốt nghiệp và chưa áp dụng cho thư mục này, trừ khi owner nói khác.
+Đây là một dự án riêng, KHÔNG thuộc repo `graduation` (thiệp tốt nghiệp). Owner muốn nó nằm ở repo của riêng nó và đã phản đối việc đưa vào `graduation`, nên đừng đẩy vào đó. Các quy tắc trong `AGENTS.md` của `graduation` (mỗi khách một trang, cổng ngày sinh, thông tin buổi lễ) không áp dụng ở đây, trừ khi owner nói khác.
 
 ## 1. Dự án là gì
 
@@ -49,7 +49,7 @@ Bản xem thử (Artifact riêng tư của owner, gom cả hai cảnh): https://
 
 ## 5. Việc còn mở
 
-1. Chuyển dự án sang repo riêng. Owner muốn có repo mới ngay từ đầu. Khi owner tạo repo trống (gợi ý `bia3334/thiep-sinh-nhat`), gắn repo đó vào phiên rồi đưa thư mục này sang.
+1. Đưa dự án lên GitHub ở repo riêng. Phiên cloud không tự tạo được repo, nên cần owner tạo một repo trống (gợi ý `bia3334/thiep-sinh-nhat`) rồi gắn vào phiên để push. Cho tới lúc đó dự án chỉ tồn tại trong máy của phiên và trong file zip đã gửi owner.
 2. Câu hỏi đang chờ owner trả lời: bàn ghế ở cảnh 02 có cần to và gần hơn không, hay cho cô gái ngồi vào bàn.
 3. Dựng thiệp thật. Cần owner cho biết: thiệp gửi ai, sinh nhật ngày nào, xưng hô thế nào, lời chúc, dùng cảnh nào hay cả hai, có cổng ngày sinh như thiệp tốt nghiệp không.
 4. Agent chưa xem được GIF chạy liên tục, chỉ so được từng khung. Độ mượt do owner kiểm tra.
@@ -109,4 +109,4 @@ Những điều dễ vấp:
 | 24/11 | Thêm cảnh 02 La Mozza (bản đầu dựng theo mô tả, lúc lên đèn) |
 | 24/11 | Cảnh 02 sáng hơn, ngả về hoàng hôn |
 | 24/11 | Vẽ lại cảnh 02 theo ảnh chụp thật của quán |
-| 24/11 | Đưa dự án vào repo `graduation` (thư mục `thiep-sinh-nhat/`), viết nhật ký này |
+| 24/11 | Viết nhật ký này, thêm script chụp kiểm tra. Chưa đẩy lên GitHub vì chưa có repo riêng |
