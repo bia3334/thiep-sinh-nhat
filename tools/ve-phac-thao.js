@@ -3,7 +3,8 @@
 /* ============================================================
    VẼ BẢN PHÁC THẢO "CÔ GÁI ÔM HOA GIỮA ĐÀ LẠT"
    Chạy:  node tools/ve-phac-thao.js
-   Kết quả: phac-thao.html (một file, mở offline được)
+   Kết quả: phac-thao.html (cảnh hoàng hôn bên hồ) và phac-thao-la-mozza.html (cảnh sân hiên La Mozza),
+            mỗi file mở offline được
 
    Toàn bộ tranh là SVG sinh từ code, không dùng ảnh.
    Muốn chỉnh: sửa toạ độ / màu trong các hàm bên dưới rồi chạy lại.
@@ -858,6 +859,304 @@ function canh() {
   return s;
 }
 
+/* ============================================================
+   CẢNH 2: SÂN HIÊN LA MOZZA LÚC LÊN ĐÈN
+   Dựng theo MÔ TẢ của quán (chưa xem được ảnh thật): nhà đá + gỗ + mái ngói đất nung
+   kiểu Tuscany, xây bậc thang trên sườn đồi thông, lò pizza nướng củi, nhìn ra thung lũng
+   mờ sương. Có ảnh thật thì chỉnh lại các hàm bên dưới cho khớp.
+   ============================================================ */
+const lmNui1 = (x) => 566 + 18 * Math.sin(x / 120 + 0.5) + 9 * Math.sin(x / 47) - 36 * g(x, 700, 200);
+const lmNui2 = (x) => 618 + 16 * Math.sin(x / 90 + 2) + 8 * Math.sin(x / 35 + 1) - 28 * g(x, 420, 180);
+const lmNui3 = (x) => 676 + 14 * Math.sin(x / 70 + 1) + 7 * Math.sin(x / 29);
+const lmNui4 = (x) => 736 + 12 * Math.sin(x / 60 + 3) + 6 * Math.sin(x / 23 + 2);
+const SAN_Y = 892; // mép sân hiên (chân lan can)
+const DA = ['#A9998C', '#9F8F84', '#B3A397', '#97877D', '#AD9C8D']; // màu đá lúc chạng vạng
+
+function tuongDa(x0, y0, x1, y1, id) {
+  // mảng tường đá: nền vữa + các viên đá xếp so le
+  let s = `<clipPath id="${id}"><rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}"/></clipPath>`;
+  s += `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="#8C7D75"/><g clip-path="url(#${id})">`;
+  for (let y = y0; y < y1;) {
+    const h = R(19, 27);
+    for (let x = x0 - R(0, 30); x < x1;) {
+      const w = R(26, 56);
+      s += `<rect x="${f(x)}" y="${f(y)}" width="${f(w - 3)}" height="${f(h - 3)}" rx="6" fill="${pick(DA)}" stroke="${INK}" stroke-width=".8" stroke-opacity=".35"/>`;
+      x += w;
+    }
+    y += h;
+  }
+  return s + '</g>';
+}
+function maiNgoi(x0, yTop, xTopR, yBot, xBotR) {
+  // mái ngói đất nung: từng hàng ngói, mép dưới lượn sóng
+  let s = '';
+  const rows = 5;
+  for (let r = 0; r < rows; r++) {
+    const ya = yTop + (yBot - yTop) * (r / rows), yb = yTop + (yBot - yTop) * ((r + 1) / rows) + 3;
+    const xr = xTopR + (xBotR - xTopR) * ((r + 1) / rows);
+    let d = `M${x0},${f(ya)} L${f(xr - 8)},${f(ya)} L${f(xr)},${f(yb)}`;
+    for (let x = xr; x > x0; x -= 16) d += ' q-8,7 -16,0';
+    s += `<path class="n nh" d="${d}Z" fill="${r % 2 ? '#9E4E3E' : '#AC5846'}"/>`;
+    let gan = '';
+    for (let x = xr - 8; x > x0; x -= 16) gan += `M${f(x)},${f(ya + 3)}L${f(x)},${f(yb - 2)}`;
+    s += `<path d="${gan}" stroke="#74382E" stroke-width="1.1" opacity=".55" fill="none"/>`;
+  }
+  return s;
+}
+function khoiBep(x, y) {
+  // vài cụm khói mỏng bay lên
+  let s = '';
+  for (let i = 0; i < 3; i++) {
+    s += `<ellipse class="khoi" style="--d:${f(-i * 1.33)}s" cx="${f(x + i * 7)}" cy="${f(y - i * 20)}" rx="${12 + i * 4}" ry="${8 + i * 3}" fill="#E9E2F0" opacity=".3" filter="url(#mem)"/>`;
+  }
+  return s;
+}
+function ngonLua(x, y, k, pha = 0) {
+  // ngọn lửa ba lớp, đáy ở (x, y)
+  return `<g class="lua" style="--d:${f(-pha)}s">`
+    + `<path d="M${f(x - 9 * k)},${y} C${f(x - 12 * k)},${f(y - 12 * k)} ${f(x - 3 * k)},${f(y - 14 * k)} ${f(x - 1 * k)},${f(y - 26 * k)} C${f(x + 4 * k)},${f(y - 16 * k)} ${f(x + 12 * k)},${f(y - 12 * k)} ${f(x + 9 * k)},${y}Z" fill="#FF7A2E"/>`
+    + `<path d="M${f(x - 5.5 * k)},${y} C${f(x - 8 * k)},${f(y - 8 * k)} ${f(x - 1 * k)},${f(y - 10 * k)} ${f(x)},${f(y - 18 * k)} C${f(x + 3 * k)},${f(y - 10 * k)} ${f(x + 8 * k)},${f(y - 8 * k)} ${f(x + 5.5 * k)},${y}Z" fill="#FFB347"/>`
+    + `<path d="M${f(x - 2.6 * k)},${y} C${f(x - 4 * k)},${f(y - 5 * k)} ${f(x)},${f(y - 6 * k)} ${f(x)},${f(y - 10 * k)} C${f(x + 1.5 * k)},${f(y - 6 * k)} ${f(x + 4 * k)},${f(y - 5 * k)} ${f(x + 2.6 * k)},${y}Z" fill="#FFF0B0"/></g>`;
+}
+function chauHoa(x, y, k, mauHoa) {
+  // chậu đất nung nhỏ, hoa lay trong gió
+  let hoa = `<path d="${blob(x, y - 26 * k, 17 * k, 13 * k, 9, 0.14)}" fill="#55785A"/>`;
+  for (let i = 0; i < 9; i++) hoa += `<circle cx="${f(x + R(-15, 15) * k)}" cy="${f(y - 26 * k + R(-11, 7) * k)}" r="${f(3.2 * k)}" fill="${pick(mauHoa)}"/>`;
+  return lac(hoa, x, y - 12 * k, 4, x / W * 1.5 + R2(0, 0.4))
+    + `<path class="n nh" d="M${f(x - 13 * k)},${f(y - 16 * k)} H${f(x + 13 * k)} L${f(x + 9 * k)},${y} H${f(x - 9 * k)}Z" fill="#A6583F"/>`
+    + `<path class="n nh" d="M${f(x - 15 * k)},${f(y - 20 * k)} H${f(x + 15 * k)} V${f(y - 15 * k)} H${f(x - 15 * k)}Z" fill="#B96A4C"/>`;
+}
+function nhaLaMozza() {
+  const X1 = 262; // mép phải của tường
+  let s = '<g id="lm-nha">';
+  // ống khói + khói bếp
+  s += khoiBep(170, 280);
+  s += `<rect class="n nh" x="150" y="300" width="38" height="56" fill="${DA[1]}"/><path class="n nh" d="M144,300 h50 l-6,-12 h-38Z" fill="#9E4E3E"/>`;
+  // mái ngói + nóc + xà gỗ đỡ mái
+  s += maiNgoi(-12, 350, 236, 444, 290);
+  s += `<path class="n nh" d="M-12,342 L238,342 L244,355 L-12,355Z" fill="#8C4336"/>`;
+  s += `<path class="n nh" d="M-12,444 L292,444 L288,459 L-12,459Z" fill="#5E4132"/>`;
+  for (let x = 24; x < 280; x += 42) s += `<rect x="${x}" y="459" width="9" height="9" fill="#4A3226"/>`;
+  // tường đá + bóng mái đổ xuống
+  s += tuongDa(-12, 459, X1, SAN_Y + 8, 'lm-tuong');
+  s += `<rect x="-12" y="459" width="${X1 + 12}" height="24" fill="#2B2238" opacity=".3"/>`;
+  s += `<path class="n" d="M${X1},459 V${SAN_Y + 8}" fill="none"/>`;
+  // cửa sổ vòm sáng đèn, cánh chớp gỗ, bồn hoa
+  for (const [cx, rong] of [[196, 24], [52, 20]]) {
+    s += `<circle cx="${cx}" cy="524" r="58" fill="url(#lm-quang)" opacity=".7"/>`;
+    s += `<path d="M${cx - rong},566 V500 A${rong},${rong} 0 0 1 ${cx + rong},500 V566Z" fill="url(#lm-den)" stroke="#4A3226" stroke-width="4" stroke-linejoin="round"/>`;
+    s += `<path d="M${cx},478 V566 M${cx - rong},522 H${cx + rong}" stroke="#4A3226" stroke-width="2.4"/>`;
+    for (const sx of [cx - rong - 22, cx + rong + 2]) {
+      s += `<rect class="n nh" x="${sx}" y="488" width="20" height="78" rx="2" fill="#6F7F64"/>`;
+      let nan = '';
+      for (let y = 498; y < 562; y += 9) nan += `M${sx + 3},${y}h14`;
+      s += `<path d="${nan}" stroke="#4E5E48" stroke-width="1.3"/>`;
+    }
+    let hoa = `<path d="${blob(cx, 562, rong + 16, 9, 10, 0.16)}" fill="#55785A"/>`;
+    for (let i = 0; i < 11; i++) hoa += `<circle cx="${f(cx + R(-rong - 12, rong + 12))}" cy="${f(R(553, 566))}" r="3.4" fill="${pick(['#D9506A', '#E87990', '#F2A0AC'])}"/>`;
+    s += lac(hoa, cx, 572, 3, 0.2 + R2(0, 0.3));
+    s += `<rect class="n nh" x="${cx - rong - 12}" y="566" width="${rong * 2 + 24}" height="13" rx="2" fill="#5E4132"/>`;
+  }
+  // biển gỗ treo tên quán
+  s += `<path d="M128,598 v-16 M204,598 v-16" stroke="#2B2233" stroke-width="2"/>`;
+  s += `<rect class="n nh" x="108" y="598" width="116" height="36" rx="5" fill="#4A3226"/>`;
+  s += `<text class="bien" x="166" y="623" text-anchor="middle" font-size="23">La Mozza</text>`;
+  // vòm đá mở vào gian bếp có lò nướng củi
+  const vom = 'M102,900 V718 A64,64 0 0 1 230,718 V900Z';
+  s += `<clipPath id="lm-vom"><path d="${vom}"/></clipPath>`;
+  s += `<path d="${vom}" fill="#2A1A18"/><g clip-path="url(#lm-vom)">`;
+  s += `<ellipse cx="166" cy="820" rx="96" ry="92" fill="url(#lm-lua)" opacity=".75"/>`;
+  // củi xếp bên trái
+  for (const [x, y] of [[112, 890], [126, 890], [119, 878], [133, 878], [126, 866]]) s += `<circle cx="${x}" cy="${y}" r="7" fill="#8A6A4A" stroke="#3E2A20" stroke-width="1.1"/><circle cx="${x}" cy="${y}" r="3" fill="none" stroke="#5E4532" stroke-width=".9"/>`;
+  // bệ gạch + vòm lò trát vữa + miệng lò đỏ lửa
+  s += `<rect class="n nh" x="140" y="856" width="96" height="48" fill="#7E4636"/>`;
+  s += `<path d="M140,872 h96 M140,888 h96 M164,856 v16 M196,856 v16 M180,872 v16 M212,872 v16 M156,888 v16 M196,888 v16" stroke="#56302A" stroke-width="1.1"/>`;
+  s += `<path class="n nh" d="M136,858 C136,790 240,790 240,858Z" fill="#E4D5BD"/>`;
+  s += `<path d="M150,836 C156,812 176,802 196,804" fill="none" stroke="#F6EBD8" stroke-width="3" stroke-linecap="round" opacity=".8"/>`;
+  s += `<path d="M166,858 V832 A22,22 0 0 1 210,832 V858Z" fill="#1E100C"/>`;
+  s += `<ellipse cx="188" cy="850" rx="20" ry="12" fill="#FF9A3D" opacity=".8"/>`;
+  s += ngonLua(180, 857, 0.8, 0) + ngonLua(194, 857, 1, 0.4) + ngonLua(187, 857, 0.6, 0.7);
+  s += `<path d="M166,858 V832 A22,22 0 0 1 210,832 V858" fill="none" stroke="#B5573B" stroke-width="7" stroke-linejoin="round"/>`;
+  s += `<path d="M166,858 V832 A22,22 0 0 1 210,832 V858" fill="none" stroke="#56302A" stroke-width="7" stroke-dasharray="1.2 9" opacity=".7"/>`;
+  s += '</g>';
+  // vành đá của vòm
+  s += `<path d="M102,900 V718 A64,64 0 0 1 230,718 V900" fill="none" stroke="${INK}" stroke-width="20" stroke-linejoin="round"/>`;
+  s += `<path d="M102,900 V718 A64,64 0 0 1 230,718 V900" fill="none" stroke="#BFAF9F" stroke-width="16" stroke-linejoin="round"/>`;
+  s += `<path d="M102,900 V718 A64,64 0 0 1 230,718 V900" fill="none" stroke="${INK}" stroke-width="16" stroke-dasharray="1.2 21" opacity=".45"/>`;
+  // ánh lửa hắt ra sân
+  s += `<ellipse cx="170" cy="${SAN_Y + 34}" rx="150" ry="34" fill="#FFB25A" opacity=".4" filter="url(#mo)"/>`;
+  // đèn tường
+  s += `<circle cx="250" cy="660" r="34" fill="url(#lm-quang)"/>`;
+  s += `<path d="M250,640 v6" stroke="#2B2233" stroke-width="2.4"/><rect x="244" y="646" width="12" height="18" rx="2" fill="#FFEFC0" stroke="#2B2233" stroke-width="1.4"/>`;
+  // xẻng gỗ đưa bánh dựng cạnh vòm
+  s += `<path d="M248,${SAN_Y + 6} L247,726" stroke="${INK}" stroke-width="6.4" stroke-linecap="round"/><path d="M248,${SAN_Y + 6} L247,726" stroke="#A98458" stroke-width="4" stroke-linecap="round"/>`;
+  s += `<ellipse class="n nh" cx="247" cy="708" rx="12" ry="20" fill="#C39A6B"/>`;
+  // dây leo hoa giấy ở góc tường
+  s += `<path d="M258,${SAN_Y + 6} C250,820 264,760 256,700 C250,640 262,590 256,520 C254,500 258,486 256,474" fill="none" stroke="#4E6B4E" stroke-width="2.4" stroke-linecap="round"/>`;
+  for (let i = 0; i < 9; i++) {
+    const y = 486 + i * 46 + R(-8, 8), x = 256 + R(-7, 7);
+    let cum = `<path d="${blob(x, y, R(12, 17), R(10, 14), 8, 0.2)}" fill="${pick(['#55785A', '#4B6E52', '#63866A'])}"/>`;
+    for (let j = 0; j < 5; j++) cum += `<circle cx="${f(x + R(-12, 12))}" cy="${f(y + R(-10, 10))}" r="${f(R(2.6, 3.8))}" fill="${pick(['#E0668F', '#EC8AA8', '#F3A9C0'])}"/>`;
+    s += lac(cum, 256, y + 14, 4, 0.15 + R2(0, 0.4));
+  }
+  return s + '</g>';
+}
+function lanCan(x0, x1) {
+  // lan can đá thấp ở mép sân, bên ngoài là sườn dốc xuống thung lũng
+  const yT = 836, yB = SAN_Y + 6;
+  let s = `<rect x="${x0}" y="${yT + 10}" width="${x1 - x0}" height="${yB - yT - 10}" fill="#8C7D75"/>`;
+  for (let r = 0; r < 2; r++) {
+    for (let x = x0 - (r ? 26 : 0); x < x1; x += 52) {
+      s += `<rect x="${x + 1.5}" y="${yT + 13 + r * 24}" width="49" height="21" rx="4" fill="${pick(DA)}" stroke="${INK}" stroke-width=".8" stroke-opacity=".35"/>`;
+    }
+  }
+  return s + `<path class="n nh" d="M${x0 - 4},${yT} H${x1} V${yT + 12} H${x0 - 4}Z" fill="#B9AA9F"/>`;
+}
+function dayDen(p0, pc, p1, n) {
+  // dây đèn võng giữa hai điểm: dây + n bóng đèn sáng ấm
+  let s = `<path d="M${P(p0)} Q${P(pc)} ${P(p1)}" fill="none" stroke="#2B2233" stroke-width="1.6"/>`;
+  for (let i = 1; i <= n; i++) {
+    const t = i / (n + 1), u = 1 - t;
+    const x = u * u * p0[0] + 2 * u * t * pc[0] + t * t * p1[0], y = u * u * p0[1] + 2 * u * t * pc[1] + t * t * p1[1];
+    s += `<g class="den" style="--d:${f(-R2(0, 2))}s"><circle cx="${f(x)}" cy="${f(y + 8)}" r="16" fill="url(#lm-quang)"/>`
+      + `<path d="M${f(x)},${f(y)}v3" stroke="#2B2233" stroke-width="2"/><ellipse cx="${f(x)}" cy="${f(y + 9)}" rx="4.6" ry="5.8" fill="#FFEFC0" stroke="#E9A93F" stroke-width=".9"/></g>`;
+  }
+  return s;
+}
+function lyVang(x, y, mau) {
+  return `<path d="M${x - 9},${y - 38} C${x - 10},${y - 22} ${x - 4},${y - 16} ${x},${y - 16} C${x + 4},${y - 16} ${x + 10},${y - 22} ${x + 9},${y - 38}Z" fill="${mau}" opacity=".85"/>`
+    + `<path d="M${x - 10},${y - 46} C${x - 12},${y - 22} ${x - 4},${y - 15} ${x},${y - 15} C${x + 4},${y - 15} ${x + 12},${y - 22} ${x + 10},${y - 46} M${x},${y - 15} V${y - 2} M${x - 8},${y - 1} H${x + 8}" fill="none" stroke="${INK}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+function banAn(cx, cy) {
+  let s = '';
+  // ghế gỗ sau bàn
+  s += `<path d="M${cx - 34},${cy - 4} V${cy - 92} Q${cx},${cy - 106} ${cx + 34},${cy - 92} V${cy - 4}" fill="none" stroke="${INK}" stroke-width="8.4" stroke-linejoin="round"/>`;
+  s += `<path d="M${cx - 34},${cy - 4} V${cy - 92} Q${cx},${cy - 106} ${cx + 34},${cy - 92} V${cy - 4} M${cx - 34},${cy - 70} H${cx + 34} M${cx - 34},${cy - 46} H${cx + 34}" fill="none" stroke="#7A5638" stroke-width="5.6" stroke-linejoin="round"/>`;
+  // khăn bàn rủ + nếp gấp
+  s += `<path class="n" d="M${cx - 116},${cy} C${cx - 116},${cy + 24} ${cx - 108},${cy + 96} ${cx - 98},${cy + 128} C${cx - 60},${cy + 138} ${cx + 60},${cy + 138} ${cx + 98},${cy + 128} C${cx + 108},${cy + 96} ${cx + 116},${cy + 24} ${cx + 116},${cy}Z" fill="#E5DACB"/>`;
+  s += `<path class="nm" d="M${cx - 70},${cy + 30} q-4,50 4,98 M${cx - 20},${cy + 34} q-3,50 2,100 M${cx + 34},${cy + 34} q4,50 -2,100 M${cx + 80},${cy + 28} q4,50 -4,98"/>`;
+  s += `<ellipse class="n" cx="${cx}" cy="${cy}" rx="116" ry="34" fill="#F6EFE2"/>`;
+  // pizza trên khay gỗ: đế bánh, sốt cà, phô mai mozzarella, lá húng quế
+  s += `<ellipse class="n nh" cx="${cx - 6}" cy="${cy + 2}" rx="68" ry="20" fill="#A98458"/>`;
+  s += `<ellipse class="n nh" cx="${cx - 6}" cy="${cy}" rx="60" ry="17" fill="#E3B46A"/>`;
+  s += `<ellipse cx="${cx - 6}" cy="${cy}" rx="51" ry="13.5" fill="#C4472F"/>`;
+  for (const [dx, dy] of [[-34, -3], [-14, 5], [8, -5], [26, 3], [-22, -7], [-2, -1], [20, -8], [34, -2], [-40, 4], [4, 7]]) {
+    s += `<ellipse cx="${cx - 6 + dx}" cy="${cy + dy}" rx="7" ry="3.2" fill="#FFF6E0"/>`;
+  }
+  for (const [dx, dy, r] of [[-26, 2, 20], [-6, -6, -30], [16, 4, 40], [30, -5, -10], [-44, -2, 60]]) {
+    s += `<ellipse cx="${cx - 6 + dx}" cy="${cy + dy}" rx="5" ry="2.2" transform="rotate(${r} ${cx - 6 + dx} ${cy + dy})" fill="#4F8A4B"/>`;
+  }
+  s += `<path d="M${cx - 57},${cy} H${cx + 45} M${cx - 34},${cy - 12} L${cx + 22},${cy + 12} M${cx + 22},${cy - 12} L${cx - 34},${cy + 12}" stroke="#8E2E1E" stroke-width="1" opacity=".5"/>`;
+  // hai ly vang
+  s += lyVang(cx - 88, cy + 4, '#E9A0A8') + lyVang(cx + 86, cy + 2, '#E9A0A8');
+  // nến trong cốc thuỷ tinh
+  s += `<circle cx="${cx + 66}" cy="${cy - 22}" r="46" fill="url(#lm-quang)"/>`;
+  s += `<rect x="${cx + 58}" y="${cy - 24}" width="16" height="20" rx="3" fill="#FFF3CF" fill-opacity=".55" stroke="${INK}" stroke-width="1.3"/>`;
+  s += `<rect x="${cx + 62}" y="${cy - 14}" width="8" height="9" fill="#FFFDF4"/>` + ngonLua(cx + 66, cy - 14, 0.42, 0.2);
+  return s;
+}
+function oaiHuong(cx, baseY, h, n) {
+  // một bụi oải hương: thân xoè hình quạt, đầu mỗi thân là một bông tím
+  let than = '', bong = '';
+  for (let i = 0; i < n; i++) {
+    const a = (-90 + (i / (n - 1) - 0.5) * 72 + R(-6, 6)) * Math.PI / 180;
+    const l = h * R(0.72, 1.05);
+    const x = cx + Math.cos(a) * l, y = baseY + Math.sin(a) * l;
+    than += `M${f(cx + R(-7, 7))},${baseY}Q${f((cx + x) / 2 + R(-5, 5))},${f((baseY + y) / 2)} ${f(x)},${f(y)}`;
+    bong += `<g transform="translate(${f(x)},${f(y)}) rotate(${f(a * 180 / Math.PI + 90)})"><ellipse cx="0" cy="-10" rx="4.2" ry="12" fill="${pick(['#9B87D6', '#8672C4', '#B09EE6'])}" stroke="${INK}" stroke-width=".7" stroke-opacity=".5"/>`
+      + `<path d="M-3,-4 h6 M-3.6,-10 h7.2 M-2.6,-16 h5.2" stroke="#6C5AAE" stroke-width=".9"/></g>`;
+  }
+  return `<path d="${than}" fill="none" stroke="#5E8A6A" stroke-width="1.7" stroke-linecap="round"/>` + bong;
+}
+
+function canhLaMozza() {
+  let s = '';
+
+  // trời lúc lên đèn: tím chàm phía trên, hồng cam sát chân trời
+  s += `<rect x="-12" y="-12" width="${W + 24}" height="800" fill="url(#lm-troi)"/>`;
+  for (let i = 0; i < 18; i++) {
+    s += `<circle class="sao" style="--d:${f(-R2(0, 2))}s" cx="${f(R(40, 880))}" cy="${f(R(40, 330))}" r="${f(R(0.9, 1.9))}" fill="#FFF6DC" opacity=".85"/>`;
+  }
+  s += `<circle cx="752" cy="140" r="64" fill="url(#lm-quang)" opacity=".5"/>`;
+  s += `<path d="M742,112 a31,31 0 1,0 36,48 a25,25 0 1,1 -36,-48Z" fill="#FFF1C9"/>`;
+  s += may(620, 336, 300, 0.3, '#F3A7A0') + may(210, 392, 260, 0.28, '#F6B9A0') + may(780, 440, 220, 0.3, '#FFD0A0');
+  s += `<ellipse cx="520" cy="566" rx="520" ry="70" fill="#FFD79A" opacity=".6" filter="url(#mo)"/>`;
+
+  // thung lũng: các lớp đồi thông mờ sương, xa nhạt gần đậm
+  s += doi(lmNui1, 900, '#8D84B6');
+  s += `<g filter="url(#mo)" fill="#F1E4F3"><ellipse cx="300" cy="612" rx="340" ry="16" opacity=".55"/><ellipse cx="760" cy="604" rx="240" ry="14" opacity=".5"/></g>`;
+  s += thongXa(lmNui2, -10, W + 10, 12, 22, '#5F598C') + doi(lmNui2, 900, '#6E6899');
+  s += `<g filter="url(#mo)" fill="#E6DAF0"><ellipse cx="620" cy="668" rx="330" ry="15" opacity=".5"/><ellipse cx="160" cy="676" rx="220" ry="13" opacity=".45"/></g>`;
+  s += thongXa(lmNui3, -10, W + 10, 16, 30, '#454170') + doi(lmNui3, 900, '#504B7A');
+  s += `<g filter="url(#mo)" fill="#DCCFEA"><ellipse cx="420" cy="730" rx="360" ry="14" opacity=".45"/></g>`;
+  s += thongXa(lmNui4, -10, W + 10, 18, 34, '#34315A') + doi(lmNui4, 900, '#3D3964');
+  // đèn nhà lác đác dưới thung lũng
+  for (let i = 0; i < 20; i++) {
+    const x = R(290, 900), y = R(lmNui4(x) + 16, 828);
+    s += `<g class="den" style="--d:${f(-R2(0, 2))}s"><circle cx="${f(x)}" cy="${f(y)}" r="7" fill="url(#lm-quang)"/><circle cx="${f(x)}" cy="${f(y)}" r="1.7" fill="#FFE9A8"/></g>`;
+  }
+
+  // thông mọc từ sườn dốc bên dưới, ngọn vươn quá lan can
+  s += lac(thongLon(886, 1010, 560, -6), 886, 1010, 0.7, 1.5);
+  s += lac(thongLon(792, 1000, 330, 4), 792, 1000, 0.8, 1.35);
+  s += lac(thongLon(608, 1010, 400, 6), 608, 1010, 0.8, 1.0);
+  s += lac(thongLon(332, 1000, 300, -4), 332, 1000, 0.8, 0.5);
+
+  // lan can đá + chậu hoa đặt trên lan can
+  s += lanCan(250, W + 12);
+  s += chauHoa(586, 836, 1.1, ['#D9506A', '#E87990', '#F2A0AC']) + chauHoa(868, 836, 1.2, ['#FFFFFF', '#F6E3A6', '#FFF1D0']);
+
+  // sân hiên lát đá
+  s += `<rect x="-12" y="${SAN_Y + 6}" width="${W + 24}" height="${H - SAN_Y}" fill="url(#lm-san)"/>`;
+  let mach = '';
+  for (const y of [916, 944, 980, 1026, 1084, 1154, 1238]) mach += `M-12,${y}H${W + 12}`;
+  for (let x = -260; x <= 1160; x += 118) {
+    const k = (SAN_Y + 6 - 760) / (H + 20 - 760);
+    mach += `M${f(450 + (x - 450) * k)},${SAN_Y + 6}L${x},${H + 20}`;
+  }
+  s += `<path d="${mach}" fill="none" stroke="#4E4552" stroke-width="1.4" opacity=".45"/>`;
+
+  // nhà đá mái ngói + gian bếp lò nướng củi
+  s += nhaLaMozza();
+
+  // cột gỗ + hai dây đèn giăng ngang trên đầu
+  s += `<path d="M268,459 V196" stroke="${INK}" stroke-width="7.4" stroke-linecap="round"/><path d="M268,459 V196" stroke="#5E4132" stroke-width="4.6" stroke-linecap="round"/>`;
+  s += dayDen([268, 200], [600, 292], [914, 168], 13);
+  s += dayDen([268, 214], [560, 334], [914, 300], 12);
+
+  // vệt sáng ấm của dây đèn rọi xuống sân
+  s += `<ellipse cx="470" cy="1010" rx="400" ry="120" fill="#FFB86B" opacity=".2" filter="url(#mo)"/>`;
+
+  // bàn ăn: pizza, hai ly vang, nến
+  s += `<ellipse cx="752" cy="1150" rx="130" ry="16" fill="#1B1838" opacity=".4" filter="url(#mo)"/>`;
+  s += banAn(752, 1012);
+
+  // bóng cô gái đổ trên sân
+  s += `<ellipse cx="${GAI.x + 40}" cy="${f(GAI.y + 730 * GAI.s)}" rx="130" ry="13" fill="#1B1838" opacity=".42" filter="url(#mo)"/>`;
+
+  // cô gái đứng yên; tóc, hoa, tai thỏ, ruy băng và gấu váy động theo gió
+  s += `<g id="co-gai" transform="translate(${GAI.x},${GAI.y}) scale(${GAI.s})">${coGai()}</g>`;
+
+  // luống oải hương tiền cảnh (che bàn chân), xen vài chậu đất nung
+  for (let x = 10; x < W; x += 46) {
+    const cx = x + R(-10, 10);
+    s += lac(oaiHuong(cx, H + 16, R(128, 172), 11), cx, H + 16, 3.4, cx / W * 1.5 + R2(0, 0.4));
+  }
+  s += chauHoa(64, 1210, 2.3, ['#FFFFFF', '#F6E3A6', '#F9C9D8']) + chauHoa(842, 1236, 2, ['#D9506A', '#E87990', '#F2A0AC']);
+
+  // cánh hoa bị gió cuốn bay ngang tranh (chỉ hiện khi tranh động)
+  for (let i = 0; i < 9; i++) {
+    const mau = ['#FFFFFF', '#CFE6F8', '#F9C9D8', '#C9B8F0'][Math.floor(R2(0, 4))];
+    s += `<g transform="translate(${f(R2(300, 720))},${f(R2(430, 1090))})"><g class="bay" style="--d:${f(-R2(0, 4))}s;--dx:${f(R2(150, 260))}px;--dy:${f(R2(-60, 40))}px">`
+      + `<path class="xoay" d="M0,0 C3,-4.5 10,-4.5 13,0 C10,4.5 3,4.5 0,0Z" fill="${mau}" stroke="${INK}" stroke-width=".6" stroke-opacity=".5"/></g></g>`;
+  }
+
+  // cành thông rủ ở hai góc trên
+  s += lac(canhThong([[-10, 96], [70, 74], [150, 82], [230, 56], [300, 62]], 6, 5), -10, 96, 2, 0.1);
+  s += lac(canhThong([[W + 10, 34], [840, 60], [770, 62], [706, 96], [660, 98]], 6, 5), W + 10, 34, -2, 1.5);
+  return s;
+}
+
 function mepTranh() {
   // mép tranh loang lổ như màu nước dừng trên giấy
   const pts = [], m = 30;
@@ -892,6 +1191,12 @@ function defs() {
     <linearGradient id="ho-suong" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD27A" stop-opacity="0"/><stop offset=".6" stop-color="#E88A4A" stop-opacity=".25"/><stop offset="1" stop-color="#8E4A45" stop-opacity=".5"/></linearGradient>
     <linearGradient id="co" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8C8A52"/><stop offset=".35" stop-color="#5F7350"/><stop offset="1" stop-color="#3C4F47"/></linearGradient>
     <linearGradient id="chieu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A1838" stop-opacity="0"/><stop offset=".62" stop-color="#2A1838" stop-opacity="0"/><stop offset="1" stop-color="#2A1838" stop-opacity=".26"/></linearGradient>
+    <linearGradient id="lm-troi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#262958"/><stop offset=".3" stop-color="#4A4280"/><stop offset=".5" stop-color="#8A5D8E"/><stop offset=".63" stop-color="#D58786"/><stop offset=".73" stop-color="#F5B983"/><stop offset="1" stop-color="#F5B983"/></linearGradient>
+    <radialGradient id="lm-quang"><stop offset="0" stop-color="#FFE9A8" stop-opacity=".9"/><stop offset=".4" stop-color="#FFC966" stop-opacity=".4"/><stop offset="1" stop-color="#FFB347" stop-opacity="0"/></radialGradient>
+    <radialGradient id="lm-lua"><stop offset="0" stop-color="#FFE08A"/><stop offset=".45" stop-color="#FF9A3D" stop-opacity=".85"/><stop offset="1" stop-color="#C8452F" stop-opacity="0"/></radialGradient>
+    <linearGradient id="lm-den" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#F7A94B"/></linearGradient>
+    <linearGradient id="lm-san" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9A8B85"/><stop offset="1" stop-color="#6A5F6A"/></linearGradient>
+    <linearGradient id="lm-chieu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B1838" stop-opacity="0"/><stop offset=".55" stop-color="#1B1838" stop-opacity="0"/><stop offset="1" stop-color="#1B1838" stop-opacity=".34"/></linearGradient>
     <clipPath id="cat-ho"><rect x="-12" y="${HO_Y}" width="${W + 24}" height="170"/></clipPath>
     <clipPath id="mep"><path d="${mepTranh()}"/></clipPath>
     <filter id="mo" x="-30%" y="-120%" width="160%" height="340%"><feGaussianBlur stdDeviation="14"/></filter>
@@ -934,16 +1239,39 @@ function lopLapLanh() {
   return s + '</g>';
 }
 
-function svg() {
+/* ---------- danh sách các khung cảnh ----------
+   Mỗi cảnh: hàm vẽ, vị trí cô gái, lớp phủ màu cuối cùng và phần chữ đi kèm trang. */
+const CANH = {
+  ho: {
+    tep: 'phac-thao', tieuDe: 'Phác thảo Đà Lạt', ve: canh, gaiX: 425,
+    phu: `<rect x="0" y="0" width="${W}" height="${H}" fill="url(#chieu)"/><rect x="0" y="0" width="${W}" height="${H}" fill="#FF8A2B" opacity=".07"/>`,
+    moTa: "Phác thảo: cô gái búi tóc, không vẽ mắt, mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông màu kem đeo yếm, hai tai thêu chữ Tặng Vê và Minh Thư, đứng trên đồng cỏ Đà Lạt lúc hoàng hôn, trời cam rực sau dãy núi tím, đồi thông in bóng, mặt hồ loang nắng vàng và đỉnh LangBiang phía xa",
+    nhan: 'Phác thảo số 01 · thiệp sinh nhật', ten: 'Cô gái ôm hoa và bé thỏ giữa Đà Lạt',
+    chuThich: 'Đà Lạt, một chiều hoàng hôn',
+    ghiChu: "Trong tranh: hoàng hôn cam rực sau dãy núi, đỉnh LangBiang hai ngọn và đồi thông in bóng tím, nhà thờ nhỏ đã lên đèn bên mặt hồ loang nắng, bụi dã quỳ tháng mười một và cẩm tú cầu dưới chân. Đoá hoa vẽ theo bó thật: lily xanh, hồng kem, hồng môn xanh, hoa sao nhỏ, nụ tulip trắng, giấy ren trắng và ruy băng xanh. Tay còn lại ôm bé thỏ bông Franilla lông xù màu kem, cổ đeo yếm, hai tai thêu chữ nâu vàng.",
+  },
+  'la-mozza': {
+    tep: 'phac-thao-la-mozza', tieuDe: 'Phác thảo La Mozza', ve: canhLaMozza, gaiX: 425,
+    phu: `<rect x="0" y="0" width="${W}" height="${H}" fill="url(#lm-chieu)"/><rect x="0" y="0" width="${W}" height="${H}" fill="#3A2F6E" opacity=".06"/>`,
+    moTa: 'Phác thảo: cô gái búi tóc, không vẽ mắt, mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông màu kem, đứng trên sân hiên lát đá của quán La Mozza lúc lên đèn. Bên trái là nhà đá mái ngói đất nung có lò pizza nướng củi đỏ lửa sau vòm đá, trên đầu giăng dây đèn, bên phải là bàn ăn có pizza và nến, phía xa là thung lũng đồi thông mờ sương',
+    nhan: 'Phác thảo số 02 · thiệp sinh nhật', ten: 'Buổi tối ở La Mozza',
+    chuThich: 'La Mozza, Đà Lạt, lúc lên đèn',
+    ghiChu: 'Trong tranh: sân hiên lát đá trên sườn đồi thông, nhà đá mái ngói đất nung, lò pizza nướng củi đỏ lửa sau vòm đá, dây đèn giăng trên đầu, bàn ăn có pizza, hai ly vang và nến, thung lũng mờ sương đã lên đèn phía xa, luống oải hương dưới chân. Cảnh dựng theo mô tả thiết kế của quán (đá, gỗ, ngói đất nung, xây bậc thang giữa rừng thông) vì chưa xem được ảnh thật.',
+  },
+};
+
+function svg(ten) {
+  const c = CANH[ten];
+  // đặt lại hạt giống để mỗi cảnh luôn ra đúng một bức, không phụ thuộc thứ tự vẽ
+  seed = 20261122; seed2 = 99; GAI.x = c.gaiX;
   const d = defs();
-  const scene = canh();
+  const scene = c.ve();
   return `<svg class="tranh" id="tranh" viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="tranh-ten">
-  <title id="tranh-ten">Phác thảo: cô gái búi tóc, không vẽ mắt, mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông màu kem đeo yếm, hai tai thêu chữ Tặng Vê và Minh Thư, đứng trên đồng cỏ Đà Lạt lúc hoàng hôn, trời cam rực sau dãy núi tím, đồi thông in bóng, mặt hồ loang nắng vàng và đỉnh LangBiang phía xa</title>
+  <title id="tranh-ten">${c.moTa}</title>
   ${d}
   <g filter="url(#rung)"><g clip-path="url(#mep)">
   ${scene}
-  <rect x="0" y="0" width="${W}" height="${H}" fill="url(#chieu)"/>
-  <rect x="0" y="0" width="${W}" height="${H}" fill="#FF8A2B" opacity=".07"/>
+  ${c.phu}
   <rect x="0" y="0" width="${W}" height="${H}" filter="url(#loang)" opacity=".12"/>
   <rect x="0" y="0" width="${W}" height="${H}" filter="url(#hat)"/>
   </g></g>
@@ -977,6 +1305,9 @@ h1{font-family:var(--chu-de);font-weight:500;font-style:italic;font-size:clamp(1
   box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 18px 40px -22px rgba(20,30,45,.55),0 2px 6px rgba(20,30,45,.12)}
 .tranh{display:block;width:100%;height:auto}
 .to-giay img{display:block;width:100%;height:auto}
+.canh{display:flex;flex-direction:column;gap:clamp(12px,3vw,18px)}
+h2{font-family:var(--chu-de);font-weight:500;font-style:italic;font-size:clamp(1.2rem,4.4vw,1.5rem);line-height:1.2;margin:0}
+.bien{font-family:'Charm','Lucida Calligraphy','Apple Chancery',cursive;font-weight:700;fill:#F4E2B6}
 .to-giay figcaption{font-family:var(--chu-de);font-style:italic;color:#5A6478;font-size:clamp(.82rem,2.6vw,.95rem);text-align:right;padding:6px clamp(6px,2vw,14px) 0}
 .n{stroke:${INK};stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
 .nh{stroke-width:1.5}
@@ -998,6 +1329,9 @@ h1{font-family:var(--chu-de);font-weight:500;font-style:italic;font-size:clamp(1
 .dong .xoay{transform-box:fill-box;transform-origin:center;animation:xoay 2s linear infinite}
 .dong .chim{animation:chim 2s ease-in-out infinite}
 .dong .long-lanh{animation:nhay 2s ease-in-out infinite}
+.dong .den,.dong .sao{animation:nhay 2s ease-in-out var(--d,0s) infinite}
+.dong .lua{transform-box:fill-box;transform-origin:50% 100%;animation:lua 1s ease-in-out var(--d,0s) infinite}
+.dong .khoi{animation:khoi 4s linear var(--d,0s) infinite}
 @keyframes lac{0%,100%{transform:rotate(calc(var(--a,2deg) * -.2))}32%{transform:rotate(var(--a,2deg))}52%{transform:rotate(calc(var(--a,2deg) * .5))}70%{transform:rotate(calc(var(--a,2deg) * .85))}}
 @keyframes troi{0%,100%{transform:translateX(calc(var(--dx,6px) * -1))}50%{transform:translateX(var(--dx,6px))}}
 @keyframes gio{0%,100%{transform:skewX(1deg)}32%{transform:skewX(-6deg)}52%{transform:skewX(-2.5deg)}70%{transform:skewX(-4.5deg)}}
@@ -1006,67 +1340,101 @@ h1{font-family:var(--chu-de);font-weight:500;font-style:italic;font-size:clamp(1
 @keyframes xoay{to{transform:rotate(360deg)}}
 @keyframes chim{0%,100%{transform:translateY(-2px)}50%{transform:translateY(3px)}}
 @keyframes nhay{0%,100%{opacity:.95}50%{opacity:.5}}
+@keyframes lua{0%,100%{transform:scale(1,1)}30%{transform:scale(1.12,.84)}60%{transform:scale(.9,1.14)}}
+@keyframes khoi{0%{opacity:0;transform:translate(0,12px)}20%{opacity:.45}100%{opacity:0;transform:translate(20px,-36px)}}
 .ghi-chu{margin:0;color:var(--muc-nhat);font-size:.9rem;max-width:60ch}
-@media (prefers-reduced-motion: reduce){ .ll,.dong .lac,.dong .troi,.dong .gio,.dong .vay-gio,.dong .bay,.dong .xoay,.dong .chim,.dong .long-lanh{animation:none} }
+@media (prefers-reduced-motion: reduce){ .ll,.dong .lac,.dong .troi,.dong .gio,.dong .vay-gio,.dong .bay,.dong .xoay,.dong .chim,.dong .long-lanh,.dong .den,.dong .sao,.dong .lua,.dong .khoi{animation:none} }
 `;
 
-const BODY = `
-<main class="trang">
-  <header class="dau">
-    <p class="nhan">Phác thảo số 01 · thiệp sinh nhật</p>
-    <h1>Cô gái ôm hoa và bé thỏ giữa Đà Lạt</h1>
-  </header>
-
-  <figure class="to-giay">
-    ${svg()}
-    <figcaption>Đà Lạt, một chiều hoàng hôn</figcaption>
-  </figure>
-
-  <p class="ghi-chu">Trong tranh: hoàng hôn cam rực sau dãy núi, đỉnh LangBiang hai ngọn và đồi thông in bóng tím, nhà thờ nhỏ đã lên đèn bên mặt hồ loang nắng, bụi dã quỳ tháng mười một và cẩm tú cầu dưới chân. Đoá hoa vẽ theo bó thật: lily xanh, hồng kem, hồng môn xanh, hoa sao nhỏ, nụ tulip trắng, giấy ren trắng và ruy băng xanh. Tay còn lại ôm bé thỏ bông Franilla lông xù màu kem, cổ đeo yếm, hai tai thêu chữ nâu vàng.</p>
-</main>
-`;
-
-const TITLE = 'Phác thảo Đà Lạt';
-
-// phông chữ thêu trên tai thỏ (tạo bằng: node tools/lay-font.js)
+// phông chữ thêu trên tai thỏ và biển tên quán (tạo bằng: node tools/lay-font.js)
 const FONT_FILE = path.join(__dirname, 'font-theu.css');
 const FONT = fs.existsSync(FONT_FILE) ? fs.readFileSync(FONT_FILE, 'utf8') : '';
 if (!FONT) console.warn('Chưa có tools/font-theu.css, chữ thêu sẽ dùng phông dự phòng. Chạy: node tools/lay-font.js');
 
-const full = `<!doctype html>
+const root = path.join(__dirname, '..');
+const TRANH = {}; // tên cảnh -> SVG đã vẽ
+for (const ten of Object.keys(CANH)) TRANH[ten] = svg(ten);
+
+const hinh = (ten) => `<figure class="to-giay">
+    ${TRANH[ten]}
+    <figcaption>${CANH[ten].chuThich}</figcaption>
+  </figure>`;
+
+/* ---------- mỗi cảnh một file HTML riêng, mở offline được ---------- */
+for (const [ten, c] of Object.entries(CANH)) {
+  const full = `<!doctype html>
 <html lang="vi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>${TITLE}</title>
+<title>${c.tieuDe}</title>
 <style>${CSS}</style>
 </head>
 <body>
 <!-- ============================================================
-     BẢN PHÁC THẢO cho thiệp sinh nhật: cô gái ôm hoa giữa Đà Lạt.
+     BẢN PHÁC THẢO cho thiệp sinh nhật: ${c.ten}.
      File này do tools/ve-phac-thao.js vẽ ra. Muốn đổi hình thì sửa
      trong script rồi chạy lại: node tools/ve-phac-thao.js
      ============================================================ -->
-${BODY}
+
+<main class="trang">
+  <header class="dau">
+    <p class="nhan">${c.nhan}</p>
+    <h1>${c.ten}</h1>
+  </header>
+
+  ${hinh(ten)}
+
+  <p class="ghi-chu">${c.ghiChu}</p>
+</main>
+
 <!-- PHÔNG CHỮ NHÚNG: đừng sửa -->
 <style>${FONT}</style>
 </body>
 </html>
 `;
+  fs.writeFileSync(path.join(root, c.tep + '.html'), full);
+  console.log(`Đã vẽ xong: ${c.tep}.html (${Math.round(full.length / 1024)} KB)`);
+}
 
-// bản xem thử trên Artifact: kèm luôn GIF đung đưa nếu đã có (tạo bằng: node tools/lam-gif.js)
-const GIF_FILE = path.join(__dirname, '..', 'phac-thao.gif');
-const GIF_HINH = fs.existsSync(GIF_FILE)
-  ? `\n\n  <figure class="to-giay">\n    <img src="data:image/gif;base64,${fs.readFileSync(GIF_FILE).toString('base64')}" width="540" height="768" alt="Bản đung đưa của bức phác thảo: cô gái, tai thỏ, ruy băng, cành thông và hoa cùng lay nhẹ">\n    <figcaption>Bản đung đưa, lặp mỗi 4 giây</figcaption>\n  </figure>`
-  : '';
-const artifact = `<title>${TITLE}</title>
+/* ---------- bản xem thử trên Artifact: gom các cảnh vào một trang ----------
+   Chỉ cảnh mới nhất được nhúng dạng SVG; cảnh còn lại hiện bằng GIF (tạo bằng: node tools/lam-gif.js)
+   để trong một trang không có hai SVG trùng id. */
+const out2 = process.argv[2];
+if (out2) {
+  const gif = (ten, alt) => {
+    const p = path.join(root, CANH[ten].tep + '.gif');
+    return fs.existsSync(p)
+      ? `<figure class="to-giay">
+    <img src="data:image/gif;base64,${fs.readFileSync(p).toString('base64')}" width="540" height="768" alt="${alt}">
+    <figcaption>Bản có gió, lặp mỗi 4 giây</figcaption>
+  </figure>`
+      : '';
+  };
+  const artifact = `<title>Phác thảo Đà Lạt</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>${CSS}</style>
-${BODY.replace('</figure>', () => '</figure>' + GIF_HINH)}
-<style>${FONT}</style>`;
 
-const root = path.join(__dirname, '..');
-fs.writeFileSync(path.join(root, 'phac-thao.html'), full);
-const out2 = process.argv[2];
-if (out2) fs.writeFileSync(out2, artifact);
-console.log('Đã vẽ xong: phac-thao.html (' + Math.round(full.length / 1024) + ' KB)');
+<main class="trang">
+  <header class="dau">
+    <p class="nhan">Phác thảo thiệp sinh nhật · hai khung cảnh</p>
+    <h1>Cô gái ôm hoa và bé thỏ ở Đà Lạt</h1>
+  </header>
+
+  <section class="canh">
+    <h2>Cảnh 02 · ${CANH['la-mozza'].ten}</h2>
+  ${hinh('la-mozza')}
+  ${gif('la-mozza', 'Bản có gió của cảnh La Mozza: dây đèn nhấp nháy, lửa lò bập bùng, tóc, tai thỏ, ruy băng và oải hương lay theo gió')}
+    <p class="ghi-chu">${CANH['la-mozza'].ghiChu}</p>
+  </section>
+
+  <section class="canh">
+    <h2>Cảnh 01 · Hoàng hôn bên hồ</h2>
+  ${gif('ho', 'Bản có gió của cảnh hoàng hôn bên hồ: tóc, tai thỏ, ruy băng, cành thông và hoa lay theo gió') || hinh('ho')}
+    <p class="ghi-chu">${CANH.ho.ghiChu}</p>
+  </section>
+</main>
+
+<style>${FONT}</style>`;
+  fs.writeFileSync(out2, artifact);
+}

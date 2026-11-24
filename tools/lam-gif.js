@@ -2,8 +2,9 @@
 'use strict';
 /* ============================================================
    LÀM GIF ĐUNG ĐƯA TỪ phac-thao.html
-   Chạy:  node tools/lam-gif.js              → phac-thao.gif (rộng 540px, 40 khung, lặp 4 giây)
-          node tools/lam-gif.js 720 48       → rộng 720px, 48 khung
+   Chạy:  node tools/lam-gif.js                              → phac-thao.gif (rộng 540px, 40 khung, lặp 4 giây)
+          node tools/lam-gif.js 720 48                       → rộng 720px, 48 khung
+          node tools/lam-gif.js 540 40 phac-thao-la-mozza    → làm GIF cho cảnh La Mozza
 
    Cách làm: mở trang bằng trình duyệt không giao diện, bật lớp "dong" cho tranh,
    dừng mọi chuyển động rồi tua tới từng mốc thời gian để chụp, cuối cùng ghép bằng ffmpeg.
@@ -20,8 +21,9 @@ const RONG = parseInt(process.argv[2] || '540', 10);
 const KHUNG = parseInt(process.argv[3] || '40', 10);
 const CHU_KY = 4000; // mili giây
 const root = path.join(__dirname, '..');
-const html = path.join(root, 'phac-thao.html');
-const gif = path.join(root, 'phac-thao.gif');
+const TEP = process.argv[4] || 'phac-thao'; // tên file cảnh, không kèm đuôi
+const html = path.join(root, TEP + '.html');
+const gif = path.join(root, TEP + '.gif');
 
 (async () => {
   const tam = fs.mkdtempSync(path.join(os.tmpdir(), 'khung-gif-'));

@@ -4,22 +4,32 @@ Thiệp sinh nhật vẽ tay bằng SVG: cô gái mặc váy lụa xanh viền r
 
 ## Hiện có
 
-- `phac-thao.html`: bản phác thảo số 01. Một file duy nhất, mở offline được bằng cách bấm đúp.
-- `phac-thao.gif`: bản đung đưa của bức tranh (540x768, lặp mỗi 4 giây).
-- `tools/ve-phac-thao.js`: script vẽ ra file HTML. Toàn bộ hình là SVG sinh từ code, không dùng ảnh.
+Hai khung cảnh, cùng một cô gái:
+
+- `phac-thao.html` + `phac-thao.gif`: cảnh 01, hoàng hôn bên hồ giữa đồi thông.
+- `phac-thao-la-mozza.html` + `phac-thao-la-mozza.gif`: cảnh 02, sân hiên quán La Mozza lúc lên đèn. Cảnh này dựng theo mô tả thiết kế của quán (nhà đá, gỗ, mái ngói đất nung, xây bậc thang giữa rừng thông, lò pizza nướng củi, nhìn ra thung lũng), chưa đối chiếu với ảnh thật.
+
+Mỗi file HTML là một file duy nhất, mở offline được bằng cách bấm đúp. GIF rộng 540x768, lặp mỗi 4 giây.
+
+Công cụ:
+
+- `tools/ve-phac-thao.js`: vẽ ra cả hai file HTML. Toàn bộ hình là SVG sinh từ code, không dùng ảnh.
 - `tools/lam-gif.js`: chụp từng khung của tranh rồi ghép thành GIF.
-- `tools/font-theu.css`: phông Charm đậm (latin + vietnamese) nhúng base64, dùng cho chữ thêu trên tai thỏ.
+- `tools/font-theu.css`: phông Charm đậm (latin + vietnamese) nhúng base64, dùng cho chữ thêu trên tai thỏ và biển tên quán.
 - `tools/lay-font.js`: tải lại phông trên từ Google Fonts khi muốn đổi phông.
 
 ## Vẽ lại
 
 ```
-node tools/ve-phac-thao.js      # vẽ lại phac-thao.html
-node tools/lam-gif.js           # làm lại phac-thao.gif (cần playwright và ffmpeg)
-node tools/lam-gif.js 720 48    # GIF to hơn: rộng 720px, 48 khung
+node tools/ve-phac-thao.js                          # vẽ lại cả hai file HTML
+node tools/lam-gif.js                               # làm lại phac-thao.gif (cần playwright và ffmpeg)
+node tools/lam-gif.js 540 40 phac-thao-la-mozza     # làm lại GIF cảnh La Mozza
+node tools/lam-gif.js 720 48                        # GIF to hơn: rộng 720px, 48 khung
 ```
 
-Vị trí và cỡ cô gái nằm ở hằng `GAI` đầu file. Mỗi phần tranh là một hàm riêng: `coGai()`, `boHoa()`, `vayLua()`, `thoSau()` + `thoTruoc()` (bé thỏ, vẽ hai lớp vì cánh tay nằm xen giữa), `canh()`.
+Danh sách cảnh nằm ở hằng `CANH` (hàm vẽ, vị trí cô gái, chữ đi kèm). Thêm cảnh mới thì viết một hàm vẽ rồi khai thêm một mục ở đó.
+
+Vị trí và cỡ cô gái nằm ở hằng `GAI` đầu file. Mỗi phần tranh là một hàm riêng: `coGai()`, `boHoa()`, `vayLua()`, `thoSau()` + `thoTruoc()` (bé thỏ, vẽ hai lớp vì cánh tay nằm xen giữa), `canh()` (cảnh 01), `canhLaMozza()` (cảnh 02).
 
 Chữ thêu trên hai tai thỏ và màu chỉ nằm ở hằng `THO` (`chuTrai`, `chuPhai`, `chiTheu`).
 
