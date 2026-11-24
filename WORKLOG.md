@@ -4,7 +4,7 @@ Cập nhật lần cuối: 24/11/2026.
 
 Phiên mới hãy đọc hết file này trước khi làm tiếp.
 
-Đây là một dự án riêng, KHÔNG thuộc repo `graduation` (thiệp tốt nghiệp). Owner muốn nó nằm ở repo của riêng nó và đã phản đối việc đưa vào `graduation`, nên đừng đẩy vào đó. Các quy tắc trong `AGENTS.md` của `graduation` (mỗi khách một trang, cổng ngày sinh, thông tin buổi lễ) không áp dụng ở đây, trừ khi owner nói khác.
+Repo này (`bia3334/thiep-sinh-nhat`) là một dự án riêng, KHÔNG thuộc repo `graduation` (thiệp tốt nghiệp). Owner muốn nó nằm ở repo của riêng nó và đã phản đối việc đưa vào `graduation`, nên đừng đẩy vào đó. Các quy tắc trong `AGENTS.md` của `graduation` (mỗi khách một trang, cổng ngày sinh, thông tin buổi lễ) không áp dụng ở đây, trừ khi owner nói khác.
 
 ## 1. Dự án là gì
 
@@ -49,10 +49,9 @@ Bản xem thử (Artifact riêng tư của owner, gom cả hai cảnh): https://
 
 ## 5. Việc còn mở
 
-1. Đưa dự án lên GitHub ở repo riêng. Phiên cloud không tự tạo được repo, nên cần owner tạo một repo trống (gợi ý `bia3334/thiep-sinh-nhat`) rồi gắn vào phiên để push. Cho tới lúc đó dự án chỉ tồn tại trong máy của phiên và trong file zip đã gửi owner.
-2. Câu hỏi đang chờ owner trả lời: bàn ghế ở cảnh 02 có cần to và gần hơn không, hay cho cô gái ngồi vào bàn.
-3. Dựng thiệp thật. Cần owner cho biết: thiệp gửi ai, sinh nhật ngày nào, xưng hô thế nào, lời chúc, dùng cảnh nào hay cả hai, có cổng ngày sinh như thiệp tốt nghiệp không.
-4. Agent chưa xem được GIF chạy liên tục, chỉ so được từng khung. Độ mượt do owner kiểm tra.
+1. Câu hỏi đang chờ owner trả lời: bàn ghế ở cảnh 02 có cần to và gần hơn không, hay cho cô gái ngồi vào bàn.
+2. Dựng thiệp thật. Cần owner cho biết: thiệp gửi ai, sinh nhật ngày nào, xưng hô thế nào, lời chúc, dùng cảnh nào hay cả hai, có cổng ngày sinh như thiệp tốt nghiệp không.
+3. Agent chưa xem được GIF chạy liên tục, chỉ so được từng khung. Độ mượt do owner kiểm tra.
 
 ## 6. Làm việc với script
 
@@ -85,7 +84,7 @@ Những điều dễ vấp:
 
 ## 8. Giới hạn môi trường đã gặp
 
-- Phiên cloud chỉ có quyền GitHub với repo `graduation`, không tạo được repo mới.
+- Phiên cloud không tự tạo được repo GitHub. Repo này do owner tạo trống rồi gắn vào phiên.
 - Mạng chặn Facebook, trang Jellycat và hầu hết trang ngoài. Google Fonts thì vào được.
 - Ngày 24/11 owner duyệt một môi trường cloud tên `graduation` cho phép `www.bsa.com.vn` và `layen.vn`, nhưng lệnh tải trang vẫn bị lớp kiểm duyệt của phiên từ chối. Cách chắc ăn nhất để có hình tham khảo là nhờ owner gửi ảnh vào chat.
 - Ảnh owner gửi trong chat không nằm trong repo nên phiên mới không thấy. Những gì đã dùng từ ảnh:
@@ -109,4 +108,5 @@ Những điều dễ vấp:
 | 24/11 | Thêm cảnh 02 La Mozza (bản đầu dựng theo mô tả, lúc lên đèn) |
 | 24/11 | Cảnh 02 sáng hơn, ngả về hoàng hôn |
 | 24/11 | Vẽ lại cảnh 02 theo ảnh chụp thật của quán |
-| 24/11 | Viết nhật ký này, thêm script chụp kiểm tra. Chưa đẩy lên GitHub vì chưa có repo riêng |
+| 24/11 | Viết nhật ký này, thêm script chụp kiểm tra |
+| 24/11 | Owner tạo repo `bia3334/thiep-sinh-nhat`, đẩy toàn bộ lịch sử lên nhánh `main` |
