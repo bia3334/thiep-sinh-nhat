@@ -860,7 +860,7 @@ function canh() {
 }
 
 /* ============================================================
-   CẢNH 2: SÂN HIÊN LA MOZZA LÚC LÊN ĐÈN
+   CẢNH 2: SÂN HIÊN LA MOZZA LÚC HOÀNG HÔN
    Dựng theo MÔ TẢ của quán (chưa xem được ảnh thật): nhà đá + gỗ + mái ngói đất nung
    kiểu Tuscany, xây bậc thang trên sườn đồi thông, lò pizza nướng củi, nhìn ra thung lũng
    mờ sương. Có ảnh thật thì chỉnh lại các hàm bên dưới cho khớp.
@@ -870,12 +870,13 @@ const lmNui2 = (x) => 618 + 16 * Math.sin(x / 90 + 2) + 8 * Math.sin(x / 35 + 1)
 const lmNui3 = (x) => 676 + 14 * Math.sin(x / 70 + 1) + 7 * Math.sin(x / 29);
 const lmNui4 = (x) => 736 + 12 * Math.sin(x / 60 + 3) + 6 * Math.sin(x / 23 + 2);
 const SAN_Y = 892; // mép sân hiên (chân lan can)
-const DA = ['#A9998C', '#9F8F84', '#B3A397', '#97877D', '#AD9C8D']; // màu đá lúc chạng vạng
+const LM_MT = { x: 772, y: 528 }; // mặt trời lặn sau rặng đồi bên phải
+const DA = ['#D6C3A8', '#CDB89C', '#DECDB4', '#C4AE92', '#D9C6AA']; // màu đá bắt nắng chiều
 
 function tuongDa(x0, y0, x1, y1, id) {
   // mảng tường đá: nền vữa + các viên đá xếp so le
   let s = `<clipPath id="${id}"><rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}"/></clipPath>`;
-  s += `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="#8C7D75"/><g clip-path="url(#${id})">`;
+  s += `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="#B5A189"/><g clip-path="url(#${id})">`;
   for (let y = y0; y < y1;) {
     const h = R(19, 27);
     for (let x = x0 - R(0, 30); x < x1;) {
@@ -896,10 +897,10 @@ function maiNgoi(x0, yTop, xTopR, yBot, xBotR) {
     const xr = xTopR + (xBotR - xTopR) * ((r + 1) / rows);
     let d = `M${x0},${f(ya)} L${f(xr - 8)},${f(ya)} L${f(xr)},${f(yb)}`;
     for (let x = xr; x > x0; x -= 16) d += ' q-8,7 -16,0';
-    s += `<path class="n nh" d="${d}Z" fill="${r % 2 ? '#9E4E3E' : '#AC5846'}"/>`;
+    s += `<path class="n nh" d="${d}Z" fill="${r % 2 ? '#C0603F' : '#CC6C48'}"/>`;
     let gan = '';
     for (let x = xr - 8; x > x0; x -= 16) gan += `M${f(x)},${f(ya + 3)}L${f(x)},${f(yb - 2)}`;
-    s += `<path d="${gan}" stroke="#74382E" stroke-width="1.1" opacity=".55" fill="none"/>`;
+    s += `<path d="${gan}" stroke="#8E4230" stroke-width="1.1" opacity=".55" fill="none"/>`;
   }
   return s;
 }
@@ -931,19 +932,19 @@ function nhaLaMozza() {
   let s = '<g id="lm-nha">';
   // ống khói + khói bếp
   s += khoiBep(170, 280);
-  s += `<rect class="n nh" x="150" y="300" width="38" height="56" fill="${DA[1]}"/><path class="n nh" d="M144,300 h50 l-6,-12 h-38Z" fill="#9E4E3E"/>`;
+  s += `<rect class="n nh" x="150" y="300" width="38" height="56" fill="${DA[1]}"/><path class="n nh" d="M144,300 h50 l-6,-12 h-38Z" fill="#C0603F"/>`;
   // mái ngói + nóc + xà gỗ đỡ mái
   s += maiNgoi(-12, 350, 236, 444, 290);
-  s += `<path class="n nh" d="M-12,342 L238,342 L244,355 L-12,355Z" fill="#8C4336"/>`;
+  s += `<path class="n nh" d="M-12,342 L238,342 L244,355 L-12,355Z" fill="#A9502F"/>`;
   s += `<path class="n nh" d="M-12,444 L292,444 L288,459 L-12,459Z" fill="#5E4132"/>`;
   for (let x = 24; x < 280; x += 42) s += `<rect x="${x}" y="459" width="9" height="9" fill="#4A3226"/>`;
   // tường đá + bóng mái đổ xuống
   s += tuongDa(-12, 459, X1, SAN_Y + 8, 'lm-tuong');
-  s += `<rect x="-12" y="459" width="${X1 + 12}" height="24" fill="#2B2238" opacity=".3"/>`;
+  s += `<rect x="-12" y="459" width="${X1 + 12}" height="24" fill="#5A3F4A" opacity=".22"/>`;
   s += `<path class="n" d="M${X1},459 V${SAN_Y + 8}" fill="none"/>`;
   // cửa sổ vòm sáng đèn, cánh chớp gỗ, bồn hoa
   for (const [cx, rong] of [[196, 24], [52, 20]]) {
-    s += `<circle cx="${cx}" cy="524" r="58" fill="url(#lm-quang)" opacity=".7"/>`;
+    s += `<circle cx="${cx}" cy="524" r="58" fill="url(#lm-quang)" opacity=".3"/>`;
     s += `<path d="M${cx - rong},566 V500 A${rong},${rong} 0 0 1 ${cx + rong},500 V566Z" fill="url(#lm-den)" stroke="#4A3226" stroke-width="4" stroke-linejoin="round"/>`;
     s += `<path d="M${cx},478 V566 M${cx - rong},522 H${cx + rong}" stroke="#4A3226" stroke-width="2.4"/>`;
     for (const sx of [cx - rong - 22, cx + rong + 2]) {
@@ -981,10 +982,10 @@ function nhaLaMozza() {
   s += '</g>';
   // vành đá của vòm
   s += `<path d="M102,900 V718 A64,64 0 0 1 230,718 V900" fill="none" stroke="${INK}" stroke-width="20" stroke-linejoin="round"/>`;
-  s += `<path d="M102,900 V718 A64,64 0 0 1 230,718 V900" fill="none" stroke="#BFAF9F" stroke-width="16" stroke-linejoin="round"/>`;
+  s += `<path d="M102,900 V718 A64,64 0 0 1 230,718 V900" fill="none" stroke="#E2D3BC" stroke-width="16" stroke-linejoin="round"/>`;
   s += `<path d="M102,900 V718 A64,64 0 0 1 230,718 V900" fill="none" stroke="${INK}" stroke-width="16" stroke-dasharray="1.2 21" opacity=".45"/>`;
   // ánh lửa hắt ra sân
-  s += `<ellipse cx="170" cy="${SAN_Y + 34}" rx="150" ry="34" fill="#FFB25A" opacity=".4" filter="url(#mo)"/>`;
+  s += `<ellipse cx="170" cy="${SAN_Y + 34}" rx="150" ry="34" fill="#FFB25A" opacity=".28" filter="url(#mo)"/>`;
   // đèn tường
   s += `<circle cx="250" cy="660" r="34" fill="url(#lm-quang)"/>`;
   s += `<path d="M250,640 v6" stroke="#2B2233" stroke-width="2.4"/><rect x="244" y="646" width="12" height="18" rx="2" fill="#FFEFC0" stroke="#2B2233" stroke-width="1.4"/>`;
@@ -1004,13 +1005,13 @@ function nhaLaMozza() {
 function lanCan(x0, x1) {
   // lan can đá thấp ở mép sân, bên ngoài là sườn dốc xuống thung lũng
   const yT = 836, yB = SAN_Y + 6;
-  let s = `<rect x="${x0}" y="${yT + 10}" width="${x1 - x0}" height="${yB - yT - 10}" fill="#8C7D75"/>`;
+  let s = `<rect x="${x0}" y="${yT + 10}" width="${x1 - x0}" height="${yB - yT - 10}" fill="#B5A189"/>`;
   for (let r = 0; r < 2; r++) {
     for (let x = x0 - (r ? 26 : 0); x < x1; x += 52) {
       s += `<rect x="${x + 1.5}" y="${yT + 13 + r * 24}" width="49" height="21" rx="4" fill="${pick(DA)}" stroke="${INK}" stroke-width=".8" stroke-opacity=".35"/>`;
     }
   }
-  return s + `<path class="n nh" d="M${x0 - 4},${yT} H${x1} V${yT + 12} H${x0 - 4}Z" fill="#B9AA9F"/>`;
+  return s + `<path class="n nh" d="M${x0 - 4},${yT} H${x1} V${yT + 12} H${x0 - 4}Z" fill="#E6D8C2"/>`;
 }
 function dayDen(p0, pc, p1, n) {
   // dây đèn võng giữa hai điểm: dây + n bóng đèn sáng ấm
@@ -1072,26 +1073,29 @@ function oaiHuong(cx, baseY, h, n) {
 function canhLaMozza() {
   let s = '';
 
-  // trời lúc lên đèn: tím chàm phía trên, hồng cam sát chân trời
+  // trời hoàng hôn: tím nhạt phía trên, xuống hồng san hô, cam rồi vàng sát chân trời
   s += `<rect x="-12" y="-12" width="${W + 24}" height="800" fill="url(#lm-troi)"/>`;
-  for (let i = 0; i < 18; i++) {
-    s += `<circle class="sao" style="--d:${f(-R2(0, 2))}s" cx="${f(R(40, 880))}" cy="${f(R(40, 330))}" r="${f(R(0.9, 1.9))}" fill="#FFF6DC" opacity=".85"/>`;
-  }
-  s += `<circle cx="752" cy="140" r="64" fill="url(#lm-quang)" opacity=".5"/>`;
-  s += `<path d="M742,112 a31,31 0 1,0 36,48 a25,25 0 1,1 -36,-48Z" fill="#FFF1C9"/>`;
-  s += may(620, 336, 300, 0.3, '#F3A7A0') + may(210, 392, 260, 0.28, '#F6B9A0') + may(780, 440, 220, 0.3, '#FFD0A0');
-  s += `<ellipse cx="520" cy="566" rx="520" ry="70" fill="#FFD79A" opacity=".6" filter="url(#mo)"/>`;
+  // trăng lưỡi liềm mọc sớm, còn mờ
+  s += `<path d="M742,112 a31,31 0 1,0 36,48 a25,25 0 1,1 -36,-48Z" fill="#FFF6DC" opacity=".7"/>`;
+  // mây: tầng trên tím hồng, bụng mây hắt nắng vàng
+  s += may(600, 250, 360, 0.5, '#E58FA0') + may(170, 300, 300, 0.45, '#D98BB0') + may(420, 150, 300, 0.35, '#C59AD0');
+  s += may(660, 372, 300, 0.6, '#FFD3A0') + may(230, 420, 280, 0.55, '#FFC99A') + may(470, 468, 240, 0.5, '#FFE2A8');
+  s += `<g fill="#FFF0B8" opacity=".8"><ellipse cx="540" cy="512" rx="240" ry="7"/><ellipse cx="250" cy="530" rx="160" ry="6"/></g>`;
+  // quầng sáng chân trời + mặt trời lặn sau rặng đồi bên phải
+  s += `<ellipse cx="560" cy="560" rx="520" ry="72" fill="#FFE9A8" opacity=".85" filter="url(#mo)"/>`;
+  s += `<circle cx="${LM_MT.x}" cy="${LM_MT.y}" r="280" fill="url(#quang)"/>`;
+  s += `<circle cx="${LM_MT.x}" cy="${LM_MT.y}" r="42" fill="#FFF4BE"/>`;
 
-  // thung lũng: các lớp đồi thông mờ sương, xa nhạt gần đậm
-  s += doi(lmNui1, 900, '#8D84B6');
-  s += `<g filter="url(#mo)" fill="#F1E4F3"><ellipse cx="300" cy="612" rx="340" ry="16" opacity=".55"/><ellipse cx="760" cy="604" rx="240" ry="14" opacity=".5"/></g>`;
-  s += thongXa(lmNui2, -10, W + 10, 12, 22, '#5F598C') + doi(lmNui2, 900, '#6E6899');
-  s += `<g filter="url(#mo)" fill="#E6DAF0"><ellipse cx="620" cy="668" rx="330" ry="15" opacity=".5"/><ellipse cx="160" cy="676" rx="220" ry="13" opacity=".45"/></g>`;
-  s += thongXa(lmNui3, -10, W + 10, 16, 30, '#454170') + doi(lmNui3, 900, '#504B7A');
-  s += `<g filter="url(#mo)" fill="#DCCFEA"><ellipse cx="420" cy="730" rx="360" ry="14" opacity=".45"/></g>`;
-  s += thongXa(lmNui4, -10, W + 10, 18, 34, '#34315A') + doi(lmNui4, 900, '#3D3964');
-  // đèn nhà lác đác dưới thung lũng
-  for (let i = 0; i < 20; i++) {
+  // thung lũng: các lớp đồi thông mờ sương nhuộm nắng, xa nhạt gần đậm
+  s += doi(lmNui1, 900, '#C29AB8');
+  s += `<g filter="url(#mo)" fill="#FFE2C2"><ellipse cx="300" cy="612" rx="340" ry="16" opacity=".65"/><ellipse cx="760" cy="604" rx="240" ry="14" opacity=".7"/></g>`;
+  s += thongXa(lmNui2, -10, W + 10, 12, 22, '#946D99') + doi(lmNui2, 900, '#A67EA8');
+  s += `<g filter="url(#mo)" fill="#FFD3B0"><ellipse cx="620" cy="668" rx="330" ry="15" opacity=".55"/><ellipse cx="160" cy="676" rx="220" ry="13" opacity=".5"/></g>`;
+  s += thongXa(lmNui3, -10, W + 10, 16, 30, '#75527F') + doi(lmNui3, 900, '#86608F');
+  s += `<g filter="url(#mo)" fill="#F7C0A8"><ellipse cx="420" cy="730" rx="360" ry="14" opacity=".45"/></g>`;
+  s += thongXa(lmNui4, -10, W + 10, 18, 34, '#583C66') + doi(lmNui4, 900, '#674874');
+  // vài nhà dưới thung lũng vừa lên đèn
+  for (let i = 0; i < 11; i++) {
     const x = R(290, 900), y = R(lmNui4(x) + 16, 828);
     s += `<g class="den" style="--d:${f(-R2(0, 2))}s"><circle cx="${f(x)}" cy="${f(y)}" r="7" fill="url(#lm-quang)"/><circle cx="${f(x)}" cy="${f(y)}" r="1.7" fill="#FFE9A8"/></g>`;
   }
@@ -1114,7 +1118,7 @@ function canhLaMozza() {
     const k = (SAN_Y + 6 - 760) / (H + 20 - 760);
     mach += `M${f(450 + (x - 450) * k)},${SAN_Y + 6}L${x},${H + 20}`;
   }
-  s += `<path d="${mach}" fill="none" stroke="#4E4552" stroke-width="1.4" opacity=".45"/>`;
+  s += `<path d="${mach}" fill="none" stroke="#7A6858" stroke-width="1.4" opacity=".5"/>`;
 
   // nhà đá mái ngói + gian bếp lò nướng củi
   s += nhaLaMozza();
@@ -1128,11 +1132,11 @@ function canhLaMozza() {
   s += `<ellipse cx="470" cy="1010" rx="400" ry="120" fill="#FFB86B" opacity=".2" filter="url(#mo)"/>`;
 
   // bàn ăn: pizza, hai ly vang, nến
-  s += `<ellipse cx="752" cy="1150" rx="130" ry="16" fill="#1B1838" opacity=".4" filter="url(#mo)"/>`;
+  s += `<ellipse cx="712" cy="1152" rx="140" ry="15" fill="#3A2B3F" opacity=".3" filter="url(#mo)"/>`;
   s += banAn(752, 1012);
 
   // bóng cô gái đổ trên sân
-  s += `<ellipse cx="${GAI.x + 40}" cy="${f(GAI.y + 730 * GAI.s)}" rx="130" ry="13" fill="#1B1838" opacity=".42" filter="url(#mo)"/>`;
+  s += `<ellipse cx="${GAI.x - 90}" cy="${f(GAI.y + 732 * GAI.s)}" rx="180" ry="13" fill="#3A2B3F" opacity=".34" filter="url(#mo)"/>`;
 
   // cô gái đứng yên; tóc, hoa, tai thỏ, ruy băng và gấu váy động theo gió
   s += `<g id="co-gai" transform="translate(${GAI.x},${GAI.y}) scale(${GAI.s})">${coGai()}</g>`;
@@ -1191,12 +1195,12 @@ function defs() {
     <linearGradient id="ho-suong" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD27A" stop-opacity="0"/><stop offset=".6" stop-color="#E88A4A" stop-opacity=".25"/><stop offset="1" stop-color="#8E4A45" stop-opacity=".5"/></linearGradient>
     <linearGradient id="co" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8C8A52"/><stop offset=".35" stop-color="#5F7350"/><stop offset="1" stop-color="#3C4F47"/></linearGradient>
     <linearGradient id="chieu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A1838" stop-opacity="0"/><stop offset=".62" stop-color="#2A1838" stop-opacity="0"/><stop offset="1" stop-color="#2A1838" stop-opacity=".26"/></linearGradient>
-    <linearGradient id="lm-troi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#262958"/><stop offset=".3" stop-color="#4A4280"/><stop offset=".5" stop-color="#8A5D8E"/><stop offset=".63" stop-color="#D58786"/><stop offset=".73" stop-color="#F5B983"/><stop offset="1" stop-color="#F5B983"/></linearGradient>
+    <linearGradient id="lm-troi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7C86C4"/><stop offset=".26" stop-color="#B48FC0"/><stop offset=".44" stop-color="#F0A09A"/><stop offset=".58" stop-color="#F9B26A"/><stop offset=".7" stop-color="#FFD27A"/><stop offset="1" stop-color="#FFE3A0"/></linearGradient>
     <radialGradient id="lm-quang"><stop offset="0" stop-color="#FFE9A8" stop-opacity=".9"/><stop offset=".4" stop-color="#FFC966" stop-opacity=".4"/><stop offset="1" stop-color="#FFB347" stop-opacity="0"/></radialGradient>
     <radialGradient id="lm-lua"><stop offset="0" stop-color="#FFE08A"/><stop offset=".45" stop-color="#FF9A3D" stop-opacity=".85"/><stop offset="1" stop-color="#C8452F" stop-opacity="0"/></radialGradient>
     <linearGradient id="lm-den" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#F7A94B"/></linearGradient>
-    <linearGradient id="lm-san" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9A8B85"/><stop offset="1" stop-color="#6A5F6A"/></linearGradient>
-    <linearGradient id="lm-chieu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B1838" stop-opacity="0"/><stop offset=".55" stop-color="#1B1838" stop-opacity="0"/><stop offset="1" stop-color="#1B1838" stop-opacity=".34"/></linearGradient>
+    <linearGradient id="lm-san" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D6C0A4"/><stop offset="1" stop-color="#AE9882"/></linearGradient>
+    <linearGradient id="lm-chieu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A2440" stop-opacity="0"/><stop offset=".62" stop-color="#3A2440" stop-opacity="0"/><stop offset="1" stop-color="#3A2440" stop-opacity=".16"/></linearGradient>
     <clipPath id="cat-ho"><rect x="-12" y="${HO_Y}" width="${W + 24}" height="170"/></clipPath>
     <clipPath id="mep"><path d="${mepTranh()}"/></clipPath>
     <filter id="mo" x="-30%" y="-120%" width="160%" height="340%"><feGaussianBlur stdDeviation="14"/></filter>
@@ -1252,11 +1256,11 @@ const CANH = {
   },
   'la-mozza': {
     tep: 'phac-thao-la-mozza', tieuDe: 'Phác thảo La Mozza', ve: canhLaMozza, gaiX: 425,
-    phu: `<rect x="0" y="0" width="${W}" height="${H}" fill="url(#lm-chieu)"/><rect x="0" y="0" width="${W}" height="${H}" fill="#3A2F6E" opacity=".06"/>`,
-    moTa: 'Phác thảo: cô gái búi tóc, không vẽ mắt, mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông màu kem, đứng trên sân hiên lát đá của quán La Mozza lúc lên đèn. Bên trái là nhà đá mái ngói đất nung có lò pizza nướng củi đỏ lửa sau vòm đá, trên đầu giăng dây đèn, bên phải là bàn ăn có pizza và nến, phía xa là thung lũng đồi thông mờ sương',
-    nhan: 'Phác thảo số 02 · thiệp sinh nhật', ten: 'Buổi tối ở La Mozza',
-    chuThich: 'La Mozza, Đà Lạt, lúc lên đèn',
-    ghiChu: 'Trong tranh: sân hiên lát đá trên sườn đồi thông, nhà đá mái ngói đất nung, lò pizza nướng củi đỏ lửa sau vòm đá, dây đèn giăng trên đầu, bàn ăn có pizza, hai ly vang và nến, thung lũng mờ sương đã lên đèn phía xa, luống oải hương dưới chân. Cảnh dựng theo mô tả thiết kế của quán (đá, gỗ, ngói đất nung, xây bậc thang giữa rừng thông) vì chưa xem được ảnh thật.',
+    phu: `<rect x="0" y="0" width="${W}" height="${H}" fill="url(#lm-chieu)"/><rect x="0" y="0" width="${W}" height="${H}" fill="#FF9A4D" opacity=".06"/>`,
+    moTa: 'Phác thảo: cô gái búi tóc, không vẽ mắt, mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông màu kem, đứng trên sân hiên lát đá của quán La Mozza lúc hoàng hôn, mặt trời lặn sau rặng đồi. Bên trái là nhà đá mái ngói đất nung có lò pizza nướng củi đỏ lửa sau vòm đá, trên đầu giăng dây đèn, bên phải là bàn ăn có pizza và nến, phía xa là thung lũng đồi thông mờ sương',
+    nhan: 'Phác thảo số 02 · thiệp sinh nhật', ten: 'Hoàng hôn ở La Mozza',
+    chuThich: 'La Mozza, Đà Lạt, lúc hoàng hôn',
+    ghiChu: 'Trong tranh: sân hiên lát đá trên sườn đồi thông, nhà đá mái ngói đất nung, lò pizza nướng củi đỏ lửa sau vòm đá, dây đèn giăng trên đầu, bàn ăn có pizza, hai ly vang và nến, mặt trời lặn sau thung lũng đồi thông mờ sương, luống oải hương dưới chân. Cảnh dựng theo mô tả thiết kế của quán (đá, gỗ, ngói đất nung, xây bậc thang giữa rừng thông) vì chưa xem được ảnh thật.',
   },
 };
 
