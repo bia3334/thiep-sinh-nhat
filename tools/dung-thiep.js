@@ -18,11 +18,11 @@ const path = require('path');
 /* ---------- NỘI DUNG ---------- */
 const MAT_MA = '1314';
 const TIEU_DE_TAB = 'Thiệp gửi Hoa';
-// Màn khoá: dòng chữ lớn đứng ngay trên bốn ô mật mã, đọc liền thành "Hôm nay là 1314".
-const KHOA = { tieuDe: 'Hôm nay là', phu: 'Nhập bốn số để mở thiệp' };
+// Màn khoá: câu của owner, giữ nguyên từng chữ, chỉ ngắt thành hai dòng cho vừa màn hình. Bốn ô mật mã nằm ngay dưới.
+const KHOA = { tieuDe: ['Hôm nay là 1 ngày đẹp trời', 'tui rất thích bà'], phu: 'Nhập bốn số để mở thiệp' };
 const MO_DAU = {
   goi: 'Gửi Hoa,',
-  dong: ['Hôm nay là một ngày đẹp trời.'],
+  dong: ['[Một câu mở đầu, ví dụ: tui có chuyện này muốn kể bà nghe.]'],
   nhac: 'Kéo xuống nha',
 };
 // Mỗi khoảnh khắc: "luc" là nhãn thời điểm trong ngày, "dong" là các dòng chữ chạy lên lần lượt.
@@ -31,7 +31,7 @@ const CAU_CHUYEN = [
   { luc: 'Buổi sáng', dong: ['[Một điều nhỏ ở bà mà tui để ý từ sớm.]'] },
   { luc: 'Giữa trưa', dong: ['[Một kỷ niệm vui của hai đứa.]'] },
   { luc: 'Xế chiều', dong: ['[Lúc tui nhận ra tui thích bà.]'] },
-  { luc: 'Hoàng hôn', dong: ['Tui rất thích bà.'] },
+  { luc: 'Hoàng hôn', dong: ['[Khúc cuối trước tờ tranh: một câu chốt.]'] },
 ];
 const LOI_CUOI = ['Chúc mừng sinh nhật,', 'tình yêu đời mình.'];
 const KY_TEN = '[Tên người gửi]';
@@ -203,7 +203,7 @@ p{margin:0}
   background:linear-gradient(to bottom,#4E5A8E 0%,#8F86B4 52%,#E9B7A6 100%);transition:opacity .9s ease,visibility 0s linear .9s}
 .cong.mo{opacity:0;visibility:hidden;pointer-events:none}
 .o-khoa{width:min(100%,320px);display:flex;flex-direction:column;align-items:center;gap:18px;color:#FFF8EC;text-align:center}
-.o-khoa h1{font-family:var(--chu-tay);font-weight:700;font-size:2.4rem;line-height:1.15;margin:0}
+.o-khoa h1{font-family:var(--chu-tay);font-weight:700;font-size:clamp(1.5rem,6.6vw,1.9rem);line-height:1.3;margin:0;text-wrap:balance}
 .o-khoa .phu{order:2;opacity:.85}
 .o-khoa .bao{order:3}
 .o-khoa .phim{order:4}
@@ -338,7 +338,7 @@ const THAN = `<!-- ============================================================
 
 <div class="cong" id="cong">
   <div class="o-khoa">
-    <h1>${esc(KHOA.tieuDe)}</h1>
+    <h1>${KHOA.tieuDe.map(esc).join('<br>')}</h1>
     <p class="phu">${esc(KHOA.phu)}</p>
     <div class="cham" id="cham" aria-hidden="true">${'<span></span>'.repeat(MAT_MA.length)}</div>
     <p class="bao" id="bao" role="status" aria-live="polite"></p>
