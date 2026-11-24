@@ -13,10 +13,15 @@ Hai khung cảnh, cùng một cô gái:
 
 Mỗi file HTML là một file duy nhất, mở offline được bằng cách bấm đúp. GIF rộng 540x768, lặp mỗi 4 giây.
 
+Thiệp kéo, dựng từ hai cảnh trên:
+
+- `thiep.html`: màn nhập mật mã, rồi một câu chuyện kéo dọc. Mỗi lần kéo xuống một khoảnh khắc chạy lên, trời đổi từ rạng đông sang hoàng hôn trên nền đồi thông, LangBiang và nhà thờ. Màn cuối là tờ tranh có gió của cảnh 02 kèm lời chúc. Lời hiện còn là chữ giữ chỗ trong ngoặc vuông.
+
 Công cụ:
 
 - `tools/ve-phac-thao.js`: vẽ ra cả hai file HTML. Toàn bộ hình là SVG sinh từ code, không dùng ảnh.
 - `tools/lam-gif.js`: chụp từng khung của tranh rồi ghép thành GIF.
+- `tools/dung-thiep.js`: dựng `thiep.html`. Lời, mật mã và bảng màu trời nằm ở khối "NỘI DUNG" và `MAU` đầu file. GIF cảnh 02 và phông Charm được nhúng thẳng vào trang.
 - `tools/chup.js`: chụp cả tranh và cắt cận từng vùng để tự kiểm tra bằng mắt (ảnh ra thư mục `kiem-tra/`, không đưa vào git).
 - `tools/font-theu.css`: phông Charm đậm (latin + vietnamese) nhúng base64, dùng cho chữ thêu trên tai thỏ và biển tên quán.
 - `tools/lay-font.js`: tải lại phông trên từ Google Fonts khi muốn đổi phông.
@@ -28,6 +33,7 @@ node tools/ve-phac-thao.js                          # vẽ lại cả hai file H
 node tools/lam-gif.js                               # làm lại phac-thao.gif (cần playwright và ffmpeg)
 node tools/lam-gif.js 540 40 phac-thao-la-mozza     # làm lại GIF cảnh La Mozza
 node tools/lam-gif.js 720 48                        # GIF to hơn: rộng 720px, 48 khung
+node tools/dung-thiep.js                            # dựng lại thiep.html sau khi sửa lời hoặc làm lại GIF cảnh 02
 ```
 
 Danh sách cảnh nằm ở hằng `CANH` (hàm vẽ, vị trí cô gái, chữ đi kèm). Thêm cảnh mới thì viết một hàm vẽ rồi khai thêm một mục ở đó.
