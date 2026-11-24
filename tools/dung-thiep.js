@@ -17,10 +17,12 @@ const path = require('path');
 
 /* ---------- NỘI DUNG ---------- */
 const MAT_MA = '1314';
-const TIEU_DE_TAB = 'Thiệp gửi Vê';
+const TIEU_DE_TAB = 'Thiệp gửi Hoa';
+// Màn khoá: dòng chữ lớn đứng ngay trên bốn ô mật mã, đọc liền thành "Hôm nay là 1314".
+const KHOA = { tieuDe: 'Hôm nay là', phu: 'Nhập bốn số để mở thiệp' };
 const MO_DAU = {
-  goi: 'Gửi Vê,',
-  dong: ['[Một câu mở đầu, ví dụ: tui có chuyện này muốn kể bà nghe.]'],
+  goi: 'Gửi Hoa,',
+  dong: ['Hôm nay là một ngày đẹp trời.'],
   nhac: 'Kéo xuống nha',
 };
 // Mỗi khoảnh khắc: "luc" là nhãn thời điểm trong ngày, "dong" là các dòng chữ chạy lên lần lượt.
@@ -29,7 +31,7 @@ const CAU_CHUYEN = [
   { luc: 'Buổi sáng', dong: ['[Một điều nhỏ ở bà mà tui để ý từ sớm.]'] },
   { luc: 'Giữa trưa', dong: ['[Một kỷ niệm vui của hai đứa.]'] },
   { luc: 'Xế chiều', dong: ['[Lúc tui nhận ra tui thích bà.]'] },
-  { luc: 'Hoàng hôn', dong: ['[Lời tỏ tình: một câu, nói thẳng.]'] },
+  { luc: 'Hoàng hôn', dong: ['Tui rất thích bà.'] },
 ];
 const LOI_CUOI = ['Chúc mừng sinh nhật,', 'tình yêu đời mình.'];
 const KY_TEN = '[Tên người gửi]';
@@ -201,7 +203,10 @@ p{margin:0}
   background:linear-gradient(to bottom,#4E5A8E 0%,#8F86B4 52%,#E9B7A6 100%);transition:opacity .9s ease,visibility 0s linear .9s}
 .cong.mo{opacity:0;visibility:hidden;pointer-events:none}
 .o-khoa{width:min(100%,320px);display:flex;flex-direction:column;align-items:center;gap:18px;color:#FFF8EC;text-align:center}
-.o-khoa h1{font-family:var(--chu-tay);font-weight:700;font-size:2.1rem;line-height:1.15;margin:0}
+.o-khoa h1{font-family:var(--chu-tay);font-weight:700;font-size:2.4rem;line-height:1.15;margin:0}
+.o-khoa .phu{order:2;opacity:.85}
+.o-khoa .bao{order:3}
+.o-khoa .phim{order:4}
 .o-khoa .phu{font-family:var(--chu);font-size:.95rem;opacity:.9}
 .cham{display:flex;gap:16px;margin:6px 0 2px}
 .cham span{width:16px;height:16px;border-radius:50%;border:2px solid #FFF8EC;transition:background .15s,transform .15s}
@@ -333,8 +338,8 @@ const THAN = `<!-- ============================================================
 
 <div class="cong" id="cong">
   <div class="o-khoa">
-    <h1>Thiệp này có khoá</h1>
-    <p class="phu">Nhập mật mã bốn số để mở</p>
+    <h1>${esc(KHOA.tieuDe)}</h1>
+    <p class="phu">${esc(KHOA.phu)}</p>
     <div class="cham" id="cham" aria-hidden="true">${'<span></span>'.repeat(MAT_MA.length)}</div>
     <p class="bao" id="bao" role="status" aria-live="polite"></p>
     <div class="phim" id="phim">${phim}</div>

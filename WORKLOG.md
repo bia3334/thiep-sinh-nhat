@@ -47,11 +47,17 @@ Bản xem thử thiệp kéo (Artifact riêng tư của owner): https://claude.a
 - Cô ấy sẽ mở thiệp ngay tại La Mozza, nên màn cuối dùng cảnh 02.
 - Mật mã mở thiệp là 1314.
 - Xưng hô thường ngày của hai người: "tui" với "bà", hoặc "mình" với "bạn".
+- Màn mở đầu ghi "Gửi Hoa," (owner bảo đổi từ "Gửi Vê"). Chữ thêu trên tai thỏ vẫn giữ "Tặng Vê" và "Minh Thư".
+- Màn khoá: dòng chữ lớn là "Hôm nay là" (thay cho "Thiệp này có khoá").
+- Owner đưa câu: "Hôm nay là 1 ngày đẹp trời tui rất thích bà" và hỏi ý agent.
+- Cảnh 02: bàn và người phải cân đối. Bản bàn nhỏ bằng một phần tư người đã bị chê.
 - Lời cuối owner đề xuất: "Chúc mừng sinh nhật tình yêu đời mình". Agent có đưa bản nhẹ hơn ("người mình thương"), owner chưa chọn.
 
 ## 4. Agent tự chọn, owner chưa xác nhận
 
-- Thiệp kéo: gọi người nhận là "Vê" ở màn mở đầu và tên tab (suy từ chữ thêu "Tặng Vê"), chữ giữ chỗ viết theo giọng "tui" với "bà".
+- Thiệp kéo: câu owner đưa được tách đôi. "Hôm nay là một ngày đẹp trời." làm câu mở đầu (nối với màn khoá "Hôm nay là"), "Tui rất thích bà." làm lời tỏ tình ở khúc Hoàng hôn. Số "1" viết thành chữ "một". Owner chưa xác nhận cách tách này.
+- Thiệp kéo: giữ dòng phụ "Nhập bốn số để mở thiệp" dưới bốn ô mật mã. Chữ giữ chỗ còn lại viết theo giọng "tui" với "bà".
+- Cảnh 02: bộ bàn ghế phóng 1,7 lần (hằng `BAN`) để mặt bàn cao ngang hông cô gái, dù và bàn dời sang trái 32 đơn vị, cô gái dời sang trái 24 đơn vị (`gaiX` 306). Ghế bên phải bị mép tranh cắt một phần.
 - Thiệp kéo: năm nhãn thời điểm (Bình minh, Buổi sáng, Giữa trưa, Xế chiều, Hoàng hôn), lời tỏ tình nằm ở khúc Hoàng hôn, tách khỏi lời chúc ở tờ tranh cuối.
 - Thiệp kéo: cô gái chỉ hiện ở màn cuối. Đoạn kéo chỉ có đồi thông, LangBiang, nhà thờ vẽ dạng bóng đổ. Mặt trời mọc bên phải, lặn bên trái cho khớp tờ tranh.
 - Thiệp kéo: màn khoá dùng bàn phím số tự vẽ, không có nút "đồng ý" ở cuối để câu trả lời dành cho lúc gặp mặt.
@@ -63,8 +69,8 @@ Bản xem thử thiệp kéo (Artifact riêng tư của owner): https://claude.a
 
 ## 5. Việc còn mở
 
-1. Câu hỏi đang chờ owner trả lời: bàn ghế ở cảnh 02 có cần to và gần hơn không, hay cho cô gái ngồi vào bàn.
-2. Điền lời thật vào thiệp kéo. Owner chưa nghĩ ra kỷ niệm. Cần: câu mở đầu, 4 đến 5 kỷ niệm, câu tỏ tình, chọn lời chúc cuối, tên ký, xác nhận gọi cô ấy là "Vê" hay "Minh Thư".
+1. Chờ owner xem lại cảnh 02 sau khi phóng bàn ghế cho cân với người.
+2. Điền lời thật vào thiệp kéo. Owner chưa nghĩ ra kỷ niệm. Cần: bốn khúc Bình minh, Buổi sáng, Giữa trưa, Xế chiều, chọn lời chúc cuối, tên ký.
 3. Agent chưa xem được GIF chạy liên tục, chỉ so được từng khung. Độ mượt do owner kiểm tra. Tương tự, thiệp kéo mới được chụp từng mốc ở cỡ 390x844, chưa thử trên điện thoại thật.
 4. Chưa chốt cách đưa thiệp tới tay cô ấy (đường dẫn nào, mã QR hay gửi tin nhắn). Mật mã chỉ kiểm tra ngay trên trang nên không phải là bảo mật thật.
 
@@ -89,6 +95,7 @@ Thiệp kéo (`tools/dung-thiep.js`):
 Những điều dễ vấp:
 
 - Mỗi cảnh khai trong hằng `CANH` (hàm vẽ, vị trí cô gái `gaiX`, lớp phủ màu, chữ đi kèm). Cô gái, bó hoa, thỏ dùng chung cho mọi cảnh: `coGai()`, `boHoa()`, `thoSau()` và `thoTruoc()`.
+- Bộ bàn ghế cảnh 02 vẽ ở cỡ gốc quanh điểm (716, 1194) rồi phóng bằng hằng `BAN` (`x`, `y` là chỗ chân bàn chạm đất, `k` là độ phóng). Muốn bàn to nhỏ hay xa gần thì sửa `BAN`, đừng sửa toạ độ trong `banAn()` và `gheSat()`.
 - Hạt giống ngẫu nhiên được đặt lại trước mỗi cảnh. Thêm một lời gọi `R()` vào hàm dùng chung sẽ làm xê dịch cây cỏ của cả hai cảnh. Tham số chỉ dành cho chuyển động thì dùng `R2()`.
 - Thứ tự vẽ quyết định cái gì che cái gì. Lỗi từng gặp: cánh tay vẽ trước váy nên bị váy che mất. Thỏ vẽ hai lớp vì cánh tay nằm xen giữa.
 - Chuyển động: bọc hình bằng `lac(hình, ox, oy, biênĐộ, lệchPha)`. Vật mọc từ dưới lên dùng biên độ dương, vật rủ từ trên xuống (tai thỏ, ruy băng, tóc) dùng biên độ âm thì cùng tạt về bên phải. Chu kỳ chỉ 4 giây hoặc 2 giây để GIF lặp liền mạch.
@@ -134,3 +141,4 @@ Những điều dễ vấp:
 | 24/11 | Viết nhật ký này, thêm script chụp kiểm tra |
 | 24/11 | Owner tạo repo `bia3334/thiep-sinh-nhat`, đẩy toàn bộ lịch sử lên nhánh `main` |
 | 24/11 | Owner chốt ý thiệp kéo vừa chúc sinh nhật vừa tỏ tình, mở tại La Mozza, mật mã 1314. Dựng bản khung `thiep.html` với chữ giữ chỗ |
+| 24/11 | Thiệp kéo: đổi thành "Gửi Hoa", màn khoá ghi "Hôm nay là", đưa câu của owner vào lời mở đầu và lời tỏ tình. Cảnh 02: phóng bàn ghế cho cân với người, làm lại GIF |

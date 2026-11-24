@@ -1074,6 +1074,10 @@ function banAn(cx, cy) {
   return s;
 }
 
+// Bộ bàn ghế: x, y là chỗ chân bàn chạm đất, k là độ phóng so với nét vẽ gốc.
+// Cô gái cao khoảng 830 đơn vị, bàn ăn thật cao gần nửa người nên mặt bàn phải cách đất khoảng 190 * k đơn vị.
+const BAN = { x: 684, y: 1136, k: 1.7 };
+
 function canhLaMozza() {
   let s = '';
 
@@ -1139,16 +1143,19 @@ function canhLaMozza() {
   s += lac(hoaTim(60, 890, 120, 9, ['#9B6FD0', '#8457BE', '#B08AE0']), 60, 890, 4, 0.1 + R2(0, 0.3));
 
   // tán dù vải kem: một tán ngay trên đầu, một tán che bàn ăn
-  s += `<path d="M716,300 V1000" stroke="${INK}" stroke-width="13" stroke-linecap="round"/><path d="M716,300 V1000" stroke="#B98A55" stroke-width="9.4" stroke-linecap="round"/>`;
-  s += `<path d="M713,330 V990" stroke="#D9B07A" stroke-width="2" opacity=".7"/>`;
-  s += tanDu(716, 300, 252, 54);
+  s += `<path d="M${BAN.x},300 V${BAN.y - 16}" stroke="${INK}" stroke-width="13" stroke-linecap="round"/><path d="M${BAN.x},300 V${BAN.y - 16}" stroke="#B98A55" stroke-width="9.4" stroke-linecap="round"/>`;
+  s += `<path d="M${BAN.x - 3},330 V${BAN.y - 26}" stroke="#D9B07A" stroke-width="2" opacity=".7"/>`;
+  s += tanDu(BAN.x, 300, 252, 54);
   s += tanDuGan();
 
   // bàn ghế: ghế sau bàn, bàn bát giác, ghế bên phải quay lưng về phía người xem
-  s += `<ellipse cx="760" cy="1196" rx="210" ry="18" fill="#3A2B3F" opacity=".3" filter="url(#mo)"/>`;
+  // Cả bộ vẽ quanh chân bàn (716, 1194) rồi phóng theo BAN.k, để mặt bàn cao ngang hông cô gái.
+  s += `<ellipse cx="${BAN.x + 44 * BAN.k}" cy="${BAN.y + 4}" rx="${f(210 * BAN.k)}" ry="${f(15 * BAN.k)}" fill="#3A2B3F" opacity=".3" filter="url(#mo)"/>`;
+  s += `<g class="ban-ghe" transform="translate(${BAN.x},${BAN.y}) scale(${BAN.k}) translate(-716,-1194)">`;
   s += gheSat(604, 1078, 1);
   s += banAn(716, 1004);
   s += gheSat(852, 1094, -1);
+  s += '</g>';
 
   // bóng cô gái đổ dài về bên phải (nắng xiên từ trái)
   s += `<ellipse cx="${GAI.x + 110}" cy="${f(GAI.y + 732 * GAI.s)}" rx="170" ry="13" fill="#3A2B3F" opacity=".34" filter="url(#mo)"/>`;
@@ -1265,7 +1272,7 @@ const CANH = {
     ghiChu: "Trong tranh: hoàng hôn cam rực sau dãy núi, đỉnh LangBiang hai ngọn và đồi thông in bóng tím, nhà thờ nhỏ đã lên đèn bên mặt hồ loang nắng, bụi dã quỳ tháng mười một và cẩm tú cầu dưới chân. Đoá hoa vẽ theo bó thật: lily xanh, hồng kem, hồng môn xanh, hoa sao nhỏ, nụ tulip trắng, giấy ren trắng và ruy băng xanh. Tay còn lại ôm bé thỏ bông Franilla lông xù màu kem, cổ đeo yếm, hai tai thêu chữ nâu vàng.",
   },
   'la-mozza': {
-    tep: 'phac-thao-la-mozza', tieuDe: 'Phác thảo La Mozza', ve: canhLaMozza, gaiX: 330,
+    tep: 'phac-thao-la-mozza', tieuDe: 'Phác thảo La Mozza', ve: canhLaMozza, gaiX: 306,
     phu: `<rect x="0" y="0" width="${W}" height="${H}" fill="url(#lm-chieu)"/><rect x="0" y="0" width="${W}" height="${H}" fill="#FF9A4D" opacity=".06"/>`,
     moTa: 'Phác thảo: cô gái búi tóc, không vẽ mắt, mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông màu kem, đứng trong sân vườn rải sỏi của quán La Mozza lúc hoàng hôn. Trên đầu là tán dù vải kem khung gỗ, bên phải là bàn bát giác mặt đá trắng chân sắt uốn bày pizza và mì Ý cùng ghế sắt đen nệm kem, sau lưng là hàng cây rậm xen hoa tím, xa hơn là khu biệt thự trắng của Đà Lạt trên đồi thông',
     nhan: 'Phác thảo số 02 · thiệp sinh nhật', ten: 'Hoàng hôn ở La Mozza',
@@ -1325,6 +1332,7 @@ h2{font-family:var(--chu-de);font-weight:500;font-style:italic;font-size:clamp(1
 .n{stroke:${INK};stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
 .nh{stroke-width:1.5}
 .nm{fill:none;stroke:${INK};stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round;opacity:.72}
+.ban-ghe .n{vector-effect:non-scaling-stroke}
 .nx{stroke:${INK};stroke-width:1.1;stroke-linejoin:round;stroke-opacity:.75}
 .nk{fill:none;stroke:#A39A82;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round}
 .nf{stroke:#5B7BA6;stroke-width:1.3;stroke-linejoin:round;stroke-linecap:round}
