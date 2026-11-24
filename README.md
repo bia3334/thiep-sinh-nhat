@@ -1,5 +1,7 @@
 # Thiệp sinh nhật Đà Lạt
 
+Tiến độ, các quyết định đã chốt và việc còn mở: xem `WORKLOG.md`.
+
 Thiệp sinh nhật vẽ tay bằng SVG: cô gái mặc váy lụa xanh viền ren, một tay ôm đoá hoa xanh trắng, tay kia ôm bé thỏ bông Franilla, đứng giữa đồi thông Đà Lạt lúc hoàng hôn.
 
 ## Hiện có
@@ -15,6 +17,7 @@ Công cụ:
 
 - `tools/ve-phac-thao.js`: vẽ ra cả hai file HTML. Toàn bộ hình là SVG sinh từ code, không dùng ảnh.
 - `tools/lam-gif.js`: chụp từng khung của tranh rồi ghép thành GIF.
+- `tools/chup.js`: chụp cả tranh và cắt cận từng vùng để tự kiểm tra bằng mắt (ảnh ra thư mục `kiem-tra/`, không đưa vào git).
 - `tools/font-theu.css`: phông Charm đậm (latin + vietnamese) nhúng base64, dùng cho chữ thêu trên tai thỏ và biển tên quán.
 - `tools/lay-font.js`: tải lại phông trên từ Google Fonts khi muốn đổi phông.
 
